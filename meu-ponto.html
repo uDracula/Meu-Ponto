@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Meu Ponto">
+<title>Meu Ponto</title>
+<style>
+  :root {
+    --red: #E53935;
+    --red2: #B71C1C;
+    --green: #2E7D32;
+    --green-light: #43A047;
+    --bg: #F5F5F5;
+    --white: #FFFFFF;
+    --text: #1A1A1A;
+    --muted: #757575;
+    --border: #E0E0E0;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100%;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* SCREENS */
+  .screen { display: none; min-height: 100dvh; padding-bottom: 30px; }
+  .screen.active { display: block; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(150deg, var(--red), var(--red2));
+    color: #fff;
+    padding: env(safe-area-inset-top, 44px) 20px 24px;
+    position: relative;
+  }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-top: 4px; }
+  .header .subtitle { font-size: 13px; opacity: 0.8; margin-top: 3px; }
+  .chip {
+    background: rgba(255,255,255,0.18);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+
+  /* BACK */
+  .back-btn {
+    background: rgba(255,255,255,0.18);
+    border: none;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  /* RESET */
+  .reset-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* CONTENT */
+  .content { padding: 16px 16px 0; }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 12px;
+    box-shadow: var(--card-shadow);
+  }
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* STATS */
+  .big-stat { font-size: 38px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .big-stat.green { color: var(--green-light); }
+  .big-stat.red { color: var(--red); }
+
+  /* PROGRESS */
+  .progress-wrap { margin-top: 14px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 7px; }
+  .progress-meta b { color: var(--text); }
+  .progress-track { height: 8px; background: #EEEEEE; border-radius: 4px; overflow: hidden; }
+  .progress-bar { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(.4,0,.2,1); background: linear-gradient(90deg, var(--red), #FF5252); }
+  .progress-bar.done { background: linear-gradient(90deg, var(--green), var(--green-light)); }
+
+  /* TWO COL */
+  .two-col { display: flex; gap: 12px; margin-bottom: 12px; }
+  .two-col .card { flex: 1; margin-bottom: 0; }
+
+  /* SALARY ROW */
+  .salary-row { display: flex; justify-content: space-between; align-items: center; }
+  .salary-label { font-size: 13px; color: var(--muted); }
+
+  /* DAILY HINT */
+  .hint-row { display: flex; justify-content: space-between; align-items: center; }
+  .hint-badge {
+    background: var(--red);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  .hint-badge.green { background: var(--green-light); }
+
+  /* TODAY MINI */
+  .today-item { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+  .today-item:last-child { border: none; }
+  .today-item .lbl { color: var(--muted); }
+  .today-item .val { font-weight: 600; }
+  .today-item .pos { font-weight: 700; color: var(--green-light); }
+
+  /* BUTTONS */
+  .btn-main {
+    width: 100%;
+    background: linear-gradient(150deg, var(--red), var(--red2));
+    color: #fff;
+    border: none;
+    padding: 18px;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    letter-spacing: -0.2px;
+    box-shadow: 0 4px 14px rgba(229,57,53,0.35);
+  }
+  .btn-sec {
+    width: 100%;
+    background: var(--white);
+    color: var(--text);
+    border: none;
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+    box-shadow: var(--card-shadow);
+  }
+  .btn-ghost {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--red);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px;
+    cursor: pointer;
+  }
+  .btn-save {
+    width: 100%;
+    background: linear-gradient(150deg, var(--green), var(--green-light));
+    color: #fff;
+    border: none;
+    padding: 18px;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 14px rgba(46,125,50,0.3);
+  }
+
+  /* FORM */
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block; }
+  .form-input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    background: #FAFAFA;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    font-family: -apple-system, monospace;
+  }
+  .form-input:focus { border-color: var(--red); background: #fff; }
+
+  /* TOGGLE */
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0 2px;
+    border-top: 1px solid var(--border);
+  }
+  .toggle-lbl { font-size: 16px; font-weight: 500; }
+  .toggle {
+    width: 51px; height: 31px;
+    background: #DDDDDD;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.25s;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--green-light); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 27px; height: 27px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px; left: 2px;
+    transition: transform 0.25s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { transform: translateX(20px); }
+
+  /* RESULT */
+  .result-hero { text-align: center; padding: 16px 0 20px; }
+  .result-time { font-size: 64px; font-weight: 800; color: var(--red); letter-spacing: -2px; line-height: 1; }
+  .result-time.early { color: var(--green-light); }
+  .result-sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+  .result-row:last-child { border: none; }
+  .result-row .rl { color: var(--muted); }
+  .result-row .rv { font-weight: 700; }
+  .result-row .rv.pos { color: var(--green-light); }
+  .result-row .rv.neg { color: #EF5350; }
+  .result-row .rv.gold { color: #F57F17; }
+
+  /* SUCCESS */
+  .success-card {
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    color: #fff;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .success-card .sc-emoji { font-size: 44px; margin-bottom: 8px; }
+  .success-card h2 { font-size: 22px; font-weight: 800; }
+  .success-card p { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+
+  /* ALERT */
+  .alert-success {
+    background: #E8F5E9;
+    color: #1B5E20;
+    border: 1px solid #A5D6A7;
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  /* HISTORY */
+  .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border); }
+  .hist-item:last-child { border: none; }
+  .hist-date { font-weight: 700; font-size: 15px; }
+  .hist-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .hist-right { text-align: right; }
+  .hist-extra { font-weight: 800; font-size: 16px; color: var(--green-light); }
+  .hist-earn { font-size: 12px; color: var(--muted); }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 50px 20px; color: var(--muted); }
+  .empty .e-icon { font-size: 52px; margin-bottom: 12px; }
+  .empty p { font-size: 16px; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 4px 0 16px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ DASHBOARD ═══════════ -->
+<div class="screen active" id="s-dash">
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <div class="chip" id="d-month-chip">Junho 2026</div>
+        <h1>Meu Ponto</h1>
+        <div class="subtitle" id="d-date">segunda-feira, 1 de junho</div>
+      </div>
+      <button class="reset-btn" onclick="confirmReset()">Novo Mês</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- Success banner -->
+    <div class="success-card" id="d-success" style="display:none">
+      <div class="sc-emoji">🎉</div>
+      <h2>Meta Atingida!</h2>
+      <p>R$ 100,00 de extras garantidos!</p>
+    </div>
+
+    <!-- Extras acumuladas -->
+    <div class="card">
+      <div class="card-label">Extras Acumuladas</div>
+      <div class="big-stat red" id="d-accumulated">0 min</div>
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span>Meta: 7h 42min</span>
+          <b id="d-pct">0%</b>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar" id="d-bar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ganhos + Salário -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-label">Ganho Extra</div>
+        <div class="big-stat green" id="d-earned">R$ 0</div>
+        <div class="salary-label" style="margin-top:4px">meta: R$ 100</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Salário Total</div>
+        <div style="font-size:22px;font-weight:800" id="d-total">R$ 2.500</div>
+        <div class="salary-label" style="margin-top:4px">líquido estimado</div>
+      </div>
+    </div>
+
+    <!-- Meta diária -->
+    <div class="card">
+      <div class="card-label">Meta Diária</div>
+      <div class="hint-row">
+        <div>
+          <div style="font-size:24px;font-weight:800" id="d-daily-min">18 min/dia</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:3px">07:50 entrada · 18:08 saída</div>
+        </div>
+        <div class="hint-badge" id="d-days-badge">-- dias</div>
+      </div>
+    </div>
+
+    <!-- Hoje -->
+    <div class="card" id="d-today-card" style="display:none">
+      <div class="card-label">Hoje</div>
+      <div id="d-today-content"></div>
+    </div>
+
+    <!-- Actions -->
+    <button class="btn-main" onclick="goRegister()">⏱ Registrar Hoje</button>
+    <button class="btn-sec" onclick="goHistory()">📋 Ver Histórico</button>
+  </div>
+</div>
+
+<!-- ═══════════ REGISTER ═══════════ -->
+<div class="screen" id="s-register">
+  <div class="header">
+    <button class="back-btn" onclick="goTo('s-dash')">← Voltar</button>
+    <h1>Registrar Hoje</h1>
+    <div class="subtitle" id="r-date"></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">🕐 Que horas entrou?</label>
+        <input type="time" class="form-input" id="i-entry" value="07:50">
+      </div>
+      <div class="form-group">
+        <label class="form-label">🍽 Saiu pro almoço às?</label>
+        <input type="time" class="form-input" id="i-lout" value="12:00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">🔙 Voltou do almoço às?</label>
+        <input type="time" class="form-input" id="i-lin" value="14:00">
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-lbl">📅 É sábado?</span>
+        <button class="toggle" id="t-sat" onclick="toggleSat()"></button>
+      </div>
+    </div>
+    <button class="btn-main" onclick="doCalculate()">Calcular Horário de Saída</button>
+    <button class="btn-ghost" onclick="goTo('s-dash')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════ RESULT ═══════════ -->
+<div class="screen" id="s-result">
+  <div class="header">
+    <button class="back-btn" onclick="goTo('s-register')">← Recalcular</button>
+    <h1>Resultado</h1>
+    <div class="subtitle" id="res-date"></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-label">Saída Ideal</div>
+      <div class="result-hero">
+        <div class="result-time" id="res-exit">18:08</div>
+        <div class="result-sub" id="res-exit-sub">para atingir +18 min de extra hoje</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-row">
+        <span class="rl">Extras de hoje</span>
+        <span class="rv pos" id="res-today">+18 min</span>
+      </div>
+      <div class="result-row">
+        <span class="rl">Entrada antecipada</span>
+        <span class="rv" id="res-early">+10 min</span>
+      </div>
+      <div class="result-row">
+        <span class="rl">Almoço</span>
+        <span class="rv" id="res-lunch">±0 min</span>
+      </div>
+      <div class="result-row">
+        <span class="rl">Total acumulado</span>
+        <span class="rv" id="res-accumulated">0h 18min</span>
+      </div>
+      <div class="result-row">
+        <span class="rl">Falta para R$ 100</span>
+        <span class="rv gold" id="res-remaining">7h 24min</span>
+      </div>
+      <div class="result-row">
+        <span class="rl">Ganho acumulado</span>
+        <span class="rv pos" id="res-earned">R$ 3,90</span>
+      </div>
+    </div>
+
+    <div class="alert-success" id="res-alert" style="display:none">🎉 Meta de R$ 100 atingida este mês!</div>
+
+    <button class="btn-save" onclick="saveDay()">💾 Salvar Dia</button>
+    <button class="btn-ghost" onclick="goTo('s-dash')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════ HISTORY ═══════════ -->
+<div class="screen" id="s-history">
+  <div class="header">
+    <button class="back-btn" onclick="goTo('s-dash')">← Voltar</button>
+    <h1>Histórico</h1>
+    <div class="subtitle" id="h-month"></div>
+  </div>
+  <div class="content">
+    <div class="card" id="h-content">
+      <div class="empty"><div class="e-icon">📭</div><p>Nenhum dia registrado</p></div>
+    </div>
+    <div class="card" id="h-summary" style="display:none">
+      <div class="card-label">Resumo do Mês</div>
+      <div class="result-row">
+        <span class="rl">Total de extras</span>
+        <span class="rv pos" id="h-total"></span>
+      </div>
+      <div class="result-row">
+        <span class="rl">Ganho extra</span>
+        <span class="rv pos" id="h-earned"></span>
+      </div>
+      <div class="result-row">
+        <span class="rl">Salário estimado</span>
+        <span class="rv" id="h-salary"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ CONSTANTS ═══
+const BASE = 2093.29;
+const GROSS = BASE * 1.30;           // 2721.28
+const NET_BASE = 2500.67;
+const HE_GROSS = (BASE / 220) * 1.5; // 14.27/h
+const HE_NET   = HE_GROSS * 0.91;    // 12.99/h (after 9% INSS)
+const TARGET_MIN = Math.ceil(100 / HE_NET * 60); // 462 min = 7h42min
+const DAILY_TARGET = 18;
+const STD_START = 480;   // 08:00
+const STD_END   = 1080;  // 18:00
+const STD_LUNCH = 120;
+const SAT_END   = 720;   // 12:00
+
+// ═══ STATE ═══
+let isSat = false;
+let calcResult = null;
+
+// ═══ STORAGE ═══
+function monthKey() {
+  const n = new Date();
+  return `ponto_${n.getFullYear()}_${n.getMonth()+1}`;
+}
+function getData() {
+  try { return JSON.parse(localStorage.getItem(monthKey())) || {entries:[],total:0}; }
+  catch { return {entries:[],total:0}; }
+}
+function setData(d) { localStorage.setItem(monthKey(), JSON.stringify(d)); }
+
+// ═══ HELPERS ═══
+function t2m(s) { const [h,m] = s.split(':').map(Number); return h*60+m; }
+function m2t(m) { return `${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
+function mDisp(m) {
+  const a=Math.abs(m), h=Math.floor(a/60), min=a%60, sg=m<0?'-':'';
+  return h>0 ? `${sg}${h}h ${String(min).padStart(2,'0')}min` : `${sg}${min} min`;
+}
+function curr(v) { return 'R$ '+v.toFixed(2).replace('.',','); }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) { return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); }
+function fmtFull() { return new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}); }
+function monthName() { return new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); }
+function daysLeft() {
+  const n=new Date(), y=n.getFullYear(), mo=n.getMonth(), last=new Date(y,mo+1,0).getDate();
+  let c=0;
+  for(let d=n.getDate();d<=last;d++) { if(new Date(y,mo,d).getDay()!==0) c++; }
+  return c;
+}
+
+// ═══ NAVIGATION ═══
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goRegister() {
+  document.getElementById('r-date').textContent = fmtFull();
+  document.getElementById('res-date').textContent = fmtFull();
+  goTo('s-register');
+}
+function goHistory() {
+  renderHistory();
+  document.getElementById('h-month').textContent = monthName();
+  goTo('s-history');
+}
+
+// ═══ DASHBOARD ═══
+function renderDash() {
+  const d = getData();
+  const total = d.total || 0;
+  const earned = (total/60)*HE_NET;
+  const pct = Math.min(100, Math.round(total/TARGET_MIN*100));
+  const totalSalary = NET_BASE + earned;
+  const dl = daysLeft();
+  const mn = monthName();
+
+  document.getElementById('d-month-chip').textContent = mn.charAt(0).toUpperCase()+mn.slice(1);
+  document.getElementById('d-date').textContent = fmtFull();
+  document.getElementById('d-accumulated').textContent = mDisp(total);
+  document.getElementById('d-pct').textContent = pct+'%';
+
+  const bar = document.getElementById('d-bar');
+  bar.style.width = pct+'%';
+  bar.className = 'progress-bar'+(pct>=100?' done':'');
+
+  document.getElementById('d-earned').textContent = curr(earned);
+  document.getElementById('d-total').textContent = curr(totalSalary);
+  document.getElementById('d-days-badge').textContent = dl+' dias';
+  document.getElementById('d-success').style.display = total>=TARGET_MIN ? 'block':'none';
+
+  // Daily remaining
+  const remaining = Math.max(0, TARGET_MIN - total);
+  const perDay = dl>0 ? Math.ceil(remaining/dl) : DAILY_TARGET;
+  document.getElementById('d-daily-min').textContent = perDay+' min/dia';
+
+  // Today
+  const te = d.entries?.find(e=>e.date===todayStr());
+  const tc = document.getElementById('d-today-card');
+  if(te) {
+    tc.style.display='block';
+    document.getElementById('d-today-content').innerHTML = `
+      <div class="today-item"><span class="lbl">Entrada</span><span class="val">${te.entry}</span></div>
+      <div class="today-item"><span class="lbl">Extra</span><span class="pos">+${te.extra} min</span></div>
+      <div class="today-item"><span class="lbl">Saída</span><span class="val">${te.exit||'—'}</span></div>
+    `;
+  } else { tc.style.display='none'; }
+}
+
+// ═══ SATURDAY TOGGLE ═══
+function toggleSat() {
+  isSat = !isSat;
+  document.getElementById('t-sat').classList.toggle('on', isSat);
+  // Adjust lunch fields
+  document.getElementById('i-lout').closest('.form-group').style.opacity = isSat ? '0.4' : '1';
+  document.getElementById('i-lin').closest('.form-group').style.opacity = isSat ? '0.4' : '1';
+}
+
+// ═══ CALCULATE ═══
+function doCalculate() {
+  const entry = document.getElementById('i-entry').value;
+  const lout  = document.getElementById('i-lout').value;
+  const lin   = document.getElementById('i-lin').value;
+  if(!entry || (!isSat && (!lout||!lin))) { alert('Preencha todos os horários!'); return; }
+
+  const entryM = t2m(entry);
+  const earlyM = Math.max(0, STD_START - entryM); // early arrival bonus
+
+  let lunchDiff = 0, exitM, extraToday;
+
+  if(isSat) {
+    // Saturday: 4h + daily target
+    const neededWork = 4*60 + DAILY_TARGET;
+    exitM = entryM + neededWork;
+    extraToday = DAILY_TARGET;
+    lunchDiff = 0;
+  } else {
+    const loutM = t2m(lout);
+    const linM  = t2m(lin);
+    const lunchTaken = linM - loutM;
+    lunchDiff = STD_LUNCH - lunchTaken; // + = short lunch (good), - = long lunch (bad)
+
+    const extraSoFar = earlyM + lunchDiff;
+    const stillNeed = Math.max(0, DAILY_TARGET - extraSoFar);
+    exitM = STD_END + stillNeed;
+    extraToday = Math.max(0, extraSoFar + stillNeed);
+    // Cap daily extra at reasonable amount
+    extraToday = Math.max(DAILY_TARGET, Math.min(extraToday, extraSoFar >= DAILY_TARGET ? extraSoFar : DAILY_TARGET));
+  }
+
+  const d = getData();
+  const prevTotal = d.total || 0;
+  const addMin = Math.max(0, extraToday);
+  const newTotal = prevTotal + addMin;
+  const earned = (newTotal/60)*HE_NET;
+  const remaining = Math.max(0, TARGET_MIN - newTotal);
+  const canLeaveEarly = !isSat && (earlyM + lunchDiff) >= DAILY_TARGET;
+
+  calcResult = { entry, lout, lin, exitTime: m2t(exitM), extraToday: addMin, newTotal, earned, remaining, earlyM, lunchDiff, isSat };
+
+  // Render result
+  const exitEl = document.getElementById('res-exit');
+  exitEl.textContent = m2t(exitM);
+  exitEl.className = 'result-time'+(canLeaveEarly?' early':'');
+
+  document.getElementById('res-exit-sub').textContent = canLeaveEarly
+    ? '✅ meta atingida! pode sair mais cedo'
+    : `para atingir +${DAILY_TARGET} min de extra hoje`;
+
+  document.getElementById('res-today').textContent = '+'+addMin+' min';
+
+  document.getElementById('res-early').textContent = earlyM > 0
+    ? '+'+earlyM+' min' : '0 min';
+
+  const lunchEl = document.getElementById('res-lunch');
+  if(isSat) { lunchEl.textContent = '—'; lunchEl.className='rv'; }
+  else if(lunchDiff>0) { lunchEl.textContent='+'+lunchDiff+' min'; lunchEl.className='rv pos'; }
+  else if(lunchDiff<0) { lunchEl.textContent=lunchDiff+' min'; lunchEl.className='rv neg'; }
+  else { lunchEl.textContent='±0 min'; lunchEl.className='rv'; }
+
+  document.getElementById('res-accumulated').textContent = mDisp(newTotal);
+
+  const remEl = document.getElementById('res-remaining');
+  if(remaining<=0) { remEl.textContent='✅ Meta atingida!'; remEl.className='rv pos'; }
+  else { remEl.textContent=mDisp(remaining); remEl.className='rv gold'; }
+
+  document.getElementById('res-earned').textContent = curr(earned);
+  document.getElementById('res-alert').style.display = newTotal>=TARGET_MIN ? 'block':'none';
+
+  goTo('s-result');
+}
+
+// ═══ SAVE ═══
+function saveDay() {
+  if(!calcResult) return;
+  const d = getData();
+  const today = todayStr();
+  d.entries = (d.entries||[]).filter(e=>e.date!==today);
+  d.entries.push({
+    date: today,
+    entry: calcResult.entry,
+    lout: calcResult.lout,
+    lin: calcResult.lin,
+    exit: calcResult.exitTime,
+    extra: calcResult.extraToday,
+    sat: calcResult.isSat
+  });
+  d.total = d.entries.reduce((s,e)=>s+e.extra,0);
+  setData(d);
+  goTo('s-dash');
+  renderDash();
+}
+
+// ═══ HISTORY ═══
+function renderHistory() {
+  const d = getData();
+  const entries = d.entries||[];
+  const hc = document.getElementById('h-content');
+  const hs = document.getElementById('h-summary');
+
+  if(entries.length===0) {
+    hc.innerHTML='<div class="empty"><div class="e-icon">📭</div><p>Nenhum dia registrado ainda</p></div>';
+    hs.style.display='none';
+    return;
+  }
+
+  const sorted = [...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  hc.innerHTML = sorted.map(e=>{
+    const earn = (e.extra/60)*HE_NET;
+    return `<div class="hist-item">
+      <div>
+        <div class="hist-date">${fmtDate(e.date)}</div>
+        <div class="hist-sub">${e.entry} → ${e.exit||'—'}${e.sat?' · Sáb':''}</div>
+      </div>
+      <div class="hist-right">
+        <div class="hist-extra">+${e.extra} min</div>
+        <div class="hist-earn">${curr(earn)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const total = d.total||0;
+  const earned = (total/60)*HE_NET;
+  document.getElementById('h-total').textContent = mDisp(total);
+  document.getElementById('h-earned').textContent = curr(earned);
+  document.getElementById('h-salary').textContent = curr(NET_BASE+earned);
+  hs.style.display='block';
+}
+
+// ═══ RESET ═══
+function confirmReset() {
+  if(confirm('Iniciar novo mês? Os dados do mês atual serão apagados.')) {
+    localStorage.removeItem(monthKey());
+    renderDash();
+  }
+}
+
+// ═══ INIT ═══
+renderDash();
+</script>
+</body>
+</html>
