@@ -2,759 +2,1165 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Meu Ponto">
 <title>Meu Ponto</title>
 <style>
-  :root {
-    --red: #E53935;
-    --red2: #B71C1C;
-    --green: #2E7D32;
-    --green-light: #43A047;
-    --bg: #F5F5F5;
-    --white: #FFFFFF;
-    --text: #1A1A1A;
-    --muted: #757575;
-    --border: #E0E0E0;
-    --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; }
-  body {
-    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    max-width: 430px;
-    margin: 0 auto;
-    min-height: 100%;
-    position: relative;
-    overflow-x: hidden;
-  }
+:root{
+  --red:#E53935;--red2:#B71C1C;
+  --green:#43A047;--green2:#2E7D32;
+  --bg:#F2F2F7;--white:#fff;
+  --text:#1A1A1A;--muted:#6C6C70;
+  --border:#E0E0E0;--shadow:0 2px 10px rgba(0,0,0,.07);
+  --orange:#F57C00;--blue:#1565C0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;min-height:100dvh}
+.screen{display:none;min-height:100dvh;padding-bottom:50px}
+.screen.active{display:block}
 
-  /* SCREENS */
-  .screen { display: none; min-height: 100dvh; padding-bottom: 30px; }
-  .screen.active { display: block; }
+/* HEADER */
+.hdr{background:linear-gradient(150deg,var(--red),var(--red2));color:#fff;padding:max(env(safe-area-inset-top),48px) 18px 22px}
+.hdr-row{display:flex;justify-content:space-between;align-items:flex-start}
+.hdr h1{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-top:3px}
+.hdr .sub{font-size:12px;opacity:.8;margin-top:3px}
+.chip{background:rgba(255,255,255,.2);border-radius:16px;padding:4px 11px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:5px;letter-spacing:.3px}
+.hdr-btns{display:flex;gap:8px;margin-top:4px}
+.icon-btn{background:rgba(255,255,255,.18);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back-btn{background:rgba(255,255,255,.18);border:none;color:#fff;padding:7px 13px;border-radius:18px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:10px;display:inline-block}
 
-  /* HEADER */
-  .header {
-    background: linear-gradient(150deg, var(--red), var(--red2));
-    color: #fff;
-    padding: env(safe-area-inset-top, 44px) 20px 24px;
-    position: relative;
-  }
-  .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
-  .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-top: 4px; }
-  .header .subtitle { font-size: 13px; opacity: 0.8; margin-top: 3px; }
-  .chip {
-    background: rgba(255,255,255,0.18);
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    display: inline-block;
-    margin-bottom: 6px;
-  }
+/* CONTENT */
+.content{padding:14px}
 
-  /* BACK */
-  .back-btn {
-    background: rgba(255,255,255,0.18);
-    border: none;
-    color: #fff;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 12px;
-  }
+/* CARD */
+.card{background:var(--white);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.clabel{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px}
 
-  /* RESET */
-  .reset-btn {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-  }
+/* BIG STAT */
+.big{font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1}
+.big.green{color:var(--green)}
+.big.red{color:var(--red)}
 
-  /* CONTENT */
-  .content { padding: 16px 16px 0; }
+/* PROGRESS */
+.prog-wrap{margin-top:13px}
+.prog-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.prog-meta b{color:var(--text)}
+.prog-track{height:8px;background:#EBEBEB;border-radius:4px;overflow:hidden}
+.prog-bar{height:100%;border-radius:4px;transition:width .5s;background:linear-gradient(90deg,var(--red),#FF5252)}
+.prog-bar.done{background:linear-gradient(90deg,var(--green2),var(--green))}
 
-  /* CARD */
-  .card {
-    background: var(--white);
-    border-radius: 18px;
-    padding: 18px;
-    margin-bottom: 12px;
-    box-shadow: var(--card-shadow);
-  }
-  .card-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
+/* TWO COL */
+.two{display:flex;gap:10px;margin-bottom:12px}
+.two .card{flex:1;margin-bottom:0}
 
-  /* STATS */
-  .big-stat { font-size: 38px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
-  .big-stat.green { color: var(--green-light); }
-  .big-stat.red { color: var(--red); }
+/* BUTTONS */
+.btn{width:100%;border:none;border-radius:15px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;padding:17px;letter-spacing:-.1px}
+.btn-red{background:linear-gradient(150deg,var(--red),var(--red2));color:#fff;box-shadow:0 4px 14px rgba(229,57,53,.3)}
+.btn-green{background:linear-gradient(150deg,var(--green),var(--green2));color:#fff;box-shadow:0 4px 14px rgba(67,160,71,.3)}
+.btn-white{background:var(--white);color:var(--text);box-shadow:var(--shadow)}
+.btn-purple{background:linear-gradient(135deg,#7B1FA2,#4A148C);color:#fff;box-shadow:0 4px 14px rgba(123,31,162,.3)}
+.btn-ghost{background:none;border:none;color:var(--red);font-size:15px;font-weight:600;padding:13px;cursor:pointer;width:100%;text-align:center;display:block}
 
-  /* PROGRESS */
-  .progress-wrap { margin-top: 14px; }
-  .progress-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 7px; }
-  .progress-meta b { color: var(--text); }
-  .progress-track { height: 8px; background: #EEEEEE; border-radius: 4px; overflow: hidden; }
-  .progress-bar { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(.4,0,.2,1); background: linear-gradient(90deg, var(--red), #FF5252); }
-  .progress-bar.done { background: linear-gradient(90deg, var(--green), var(--green-light)); }
+/* TIME INPUT ROW */
+.time-row{margin-bottom:14px}
+.time-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:7px;display:block}
+.time-inputs{display:flex;gap:8px;align-items:center}
+.finput{flex:1;padding:14px 10px;border:2px solid var(--border);border-radius:13px;font-size:22px;font-weight:700;color:var(--text);background:#FAFAFA;outline:none;text-align:center;-webkit-appearance:none;transition:border-color .2s}
+.finput:focus{border-color:var(--red);background:#fff}
+.finput.filled{border-color:#A5D6A7;background:#F1F8F1}
+.finput.late{border-color:#FFCDD2;background:#FFF5F5}
+.now-btn{background:var(--red);border:none;color:#fff;padding:0 14px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;height:52px;white-space:nowrap;flex-shrink:0;letter-spacing:.3px}
+.now-btn:active{opacity:.8}
 
-  /* TWO COL */
-  .two-col { display: flex; gap: 12px; margin-bottom: 12px; }
-  .two-col .card { flex: 1; margin-bottom: 0; }
+/* TOGGLE */
+.tog-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0 4px;border-top:1px solid var(--border)}
+.tog-lbl{font-size:15px;font-weight:500}
+.tog{width:51px;height:31px;background:#DDD;border-radius:16px;border:none;cursor:pointer;position:relative;transition:background .25s;-webkit-appearance:none;flex-shrink:0}
+.tog.on{background:var(--green)}
+.tog::after{content:'';position:absolute;width:27px;height:27px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .25s;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.tog.on::after{transform:translateX(20px)}
 
-  /* SALARY ROW */
-  .salary-row { display: flex; justify-content: space-between; align-items: center; }
-  .salary-label { font-size: 13px; color: var(--muted); }
+/* LIVE CALC */
+.live-box{background:#FFFDE7;border:1px solid #FFF176;border-radius:16px;padding:14px;margin-bottom:12px}
+.lrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:14px}
+.lrow:last-child{border:none;padding-bottom:0}
+.ll{color:var(--muted)}
+.lv{font-weight:700}
+.pos{color:var(--green)}
+.neg{color:var(--red)}
+.warn{color:var(--orange)}
+.lv-main{font-size:17px;font-weight:800}
 
-  /* DAILY HINT */
-  .hint-row { display: flex; justify-content: space-between; align-items: center; }
-  .hint-badge {
-    background: var(--red);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 20px;
-  }
-  .hint-badge.green { background: var(--green-light); }
+/* TARGET BOX */
+.tgt-box{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;border-radius:16px;padding:18px;text-align:center;margin-bottom:12px}
+.tgt-lbl{font-size:11px;opacity:.85;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.tgt-time{font-size:62px;font-weight:800;letter-spacing:-2px;line-height:1}
+.tgt-time.green-time{color:#A5D6A7}
+.tgt-sub{font-size:12px;opacity:.85;margin-top:6px}
 
-  /* TODAY MINI */
-  .today-item { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
-  .today-item:last-child { border: none; }
-  .today-item .lbl { color: var(--muted); }
-  .today-item .val { font-weight: 600; }
-  .today-item .pos { font-weight: 700; color: var(--green-light); }
+/* LUNCH RETURN BOX */
+.lunch-box{background:linear-gradient(135deg,#1565C0,#0D47A1);color:#fff;border-radius:16px;padding:18px;text-align:center;margin-bottom:12px}
+.lunch-box .lb-lbl{font-size:11px;opacity:.85;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.lunch-box .lb-time{font-size:56px;font-weight:800;letter-spacing:-2px;line-height:1}
+.lunch-box .lb-countdown{font-size:13px;opacity:.9;margin-top:6px}
+.lb-timer{font-size:22px;font-weight:800;margin-top:4px;letter-spacing:.5px}
 
-  /* BUTTONS */
-  .btn-main {
-    width: 100%;
-    background: linear-gradient(150deg, var(--red), var(--red2));
-    color: #fff;
-    border: none;
-    padding: 18px;
-    border-radius: 16px;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    letter-spacing: -0.2px;
-    box-shadow: 0 4px 14px rgba(229,57,53,0.35);
-  }
-  .btn-sec {
-    width: 100%;
-    background: var(--white);
-    color: var(--text);
-    border: none;
-    padding: 16px;
-    border-radius: 16px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 10px;
-    box-shadow: var(--card-shadow);
-  }
-  .btn-ghost {
-    width: 100%;
-    background: none;
-    border: none;
-    color: var(--red);
-    font-size: 16px;
-    font-weight: 600;
-    padding: 14px;
-    cursor: pointer;
-  }
-  .btn-save {
-    width: 100%;
-    background: linear-gradient(150deg, var(--green), var(--green-light));
-    color: #fff;
-    border: none;
-    padding: 18px;
-    border-radius: 16px;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 14px rgba(46,125,50,0.3);
-  }
+/* ATRASO */
+.atraso-card{background:#FFEBEE;border:1px solid #FFCDD2;border-radius:14px;padding:13px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.atraso-lbl{font-size:13px;font-weight:600;color:var(--red2)}
+.atraso-val{font-size:16px;font-weight:800;color:var(--red2)}
 
-  /* FORM */
-  .form-group { margin-bottom: 16px; }
-  .form-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block; }
-  .form-input {
-    width: 100%;
-    padding: 16px;
-    border: 2px solid var(--border);
-    border-radius: 14px;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text);
-    background: #FAFAFA;
-    outline: none;
-    text-align: center;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-    font-family: -apple-system, monospace;
-  }
-  .form-input:focus { border-color: var(--red); background: #fff; }
+/* SALARY IMPACT */
+.impact-card{background:linear-gradient(135deg,#E8F5E9,#F1F8E9);border:1px solid #A5D6A7;border-radius:16px;padding:16px;margin-bottom:12px}
+.impact-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--green2);margin-bottom:10px}
+.impact-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:14px}
+.impact-row:last-child{border:none;padding-bottom:0}
+.impact-row.total{padding-top:10px;margin-top:2px}
+.impact-row .il{color:var(--muted)}
+.impact-row .iv{font-weight:700}
+.impact-row.total .iv{font-size:18px;font-weight:800;color:var(--green2)}
 
-  /* TOGGLE */
-  .toggle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 0 2px;
-    border-top: 1px solid var(--border);
-  }
-  .toggle-lbl { font-size: 16px; font-weight: 500; }
-  .toggle {
-    width: 51px; height: 31px;
-    background: #DDDDDD;
-    border-radius: 16px;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    transition: background 0.25s;
-    -webkit-appearance: none;
-    flex-shrink: 0;
-  }
-  .toggle.on { background: var(--green-light); }
-  .toggle::after {
-    content: '';
-    position: absolute;
-    width: 27px; height: 27px;
-    background: #fff;
-    border-radius: 50%;
-    top: 2px; left: 2px;
-    transition: transform 0.25s;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  }
-  .toggle.on::after { transform: translateX(20px); }
+/* SUCCESS */
+.success-banner{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;border-radius:18px;padding:18px;text-align:center;margin-bottom:12px}
+.success-banner .se{font-size:42px;margin-bottom:6px}
+.success-banner h2{font-size:20px;font-weight:800}
+.success-banner p{font-size:13px;opacity:.9;margin-top:4px}
 
-  /* RESULT */
-  .result-hero { text-align: center; padding: 16px 0 20px; }
-  .result-time { font-size: 64px; font-weight: 800; color: var(--red); letter-spacing: -2px; line-height: 1; }
-  .result-time.early { color: var(--green-light); }
-  .result-sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
-  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
-  .result-row:last-child { border: none; }
-  .result-row .rl { color: var(--muted); }
-  .result-row .rv { font-weight: 700; }
-  .result-row .rv.pos { color: var(--green-light); }
-  .result-row .rv.neg { color: #EF5350; }
-  .result-row .rv.gold { color: #F57F17; }
+/* TODAY STATUS ON DASH */
+.today-status{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border:1px solid #90CAF9;border-radius:16px;padding:16px;margin-bottom:12px}
+.ts-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);margin-bottom:8px}
+.ts-exit{font-size:42px;font-weight:800;color:var(--blue);line-height:1;letter-spacing:-1px}
+.ts-sub{font-size:12px;color:#1565C0;margin-top:5px;opacity:.8}
+.ts-mini{display:flex;gap:14px;margin-top:10px}
+.ts-chip{background:rgba(21,101,192,.1);border-radius:10px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--blue)}
 
-  /* SUCCESS */
-  .success-card {
-    background: linear-gradient(135deg, var(--green), var(--green-light));
-    color: #fff;
-    border-radius: 18px;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 12px;
-  }
-  .success-card .sc-emoji { font-size: 44px; margin-bottom: 8px; }
-  .success-card h2 { font-size: 22px; font-weight: 800; }
-  .success-card p { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+/* DASH ROW */
+.trow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.trow:last-child{border:none}
+.tl{color:var(--muted)}
+.tv{font-weight:700}
+.tp{font-weight:700;color:var(--green)}
+.tn{font-weight:700;color:var(--red)}
 
-  /* ALERT */
-  .alert-success {
-    background: #E8F5E9;
-    color: #1B5E20;
-    border: 1px solid #A5D6A7;
-    border-radius: 12px;
-    padding: 13px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 12px;
-    text-align: center;
-  }
+/* HISTORY */
+.hitem{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.hitem:last-child{border:none}
+.hitem:active{opacity:.7}
+.hdate{font-weight:700;font-size:15px}
+.hsub{font-size:12px;color:var(--muted);margin-top:2px}
+.hextra{font-weight:800;font-size:16px}
+.hearn{font-size:12px;color:var(--muted)}
+.edit-hint{font-size:10px;color:var(--muted);text-align:center;padding:8px 0 0;font-style:italic}
 
-  /* HISTORY */
-  .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border); }
-  .hist-item:last-child { border: none; }
-  .hist-date { font-weight: 700; font-size: 15px; }
-  .hist-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .hist-right { text-align: right; }
-  .hist-extra { font-weight: 800; font-size: 16px; color: var(--green-light); }
-  .hist-earn { font-size: 12px; color: var(--muted); }
+/* SUMMARY CARD */
+.srow{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px}
+.srow:last-child{border:none}
+.sl{color:var(--muted)}
+.sv{font-weight:700}
+.sv.pos{color:var(--green)}
+.sv.neg{color:var(--red)}
 
-  /* EMPTY */
-  .empty { text-align: center; padding: 50px 20px; color: var(--muted); }
-  .empty .e-icon { font-size: 52px; margin-bottom: 12px; }
-  .empty p { font-size: 16px; }
+/* SETTINGS */
+.set-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.set-row:last-child{border:none}
+.set-lbl{font-size:15px;font-weight:600}
+.set-val{font-weight:700}
+.key-input{width:100%;padding:13px;border:2px solid var(--border);border-radius:12px;font-size:13px;font-family:monospace;outline:none;background:#FAFAFA;margin-bottom:10px}
+.key-input:focus{border-color:var(--red)}
+.api-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px}
+.api-badge.ok{background:#E8F5E9;color:var(--green2)}
+.api-badge.no{background:#FFEBEE;color:var(--red2)}
 
-  /* DIVIDER */
-  .divider { height: 1px; background: var(--border); margin: 4px 0 16px; }
+/* ALERTS */
+.alert{padding:13px 16px;border-radius:13px;font-size:13px;font-weight:500;margin-bottom:12px;line-height:1.4}
+.alert.ok{background:#E8F5E9;color:var(--green2);border:1px solid #A5D6A7}
+.alert.err{background:#FFEBEE;color:var(--red2);border:1px solid #FFCDD2}
+.alert.info{background:#E3F2FD;color:var(--blue);border:1px solid #90CAF9}
+
+/* LOADING */
+.loading-box{text-align:center;padding:24px;color:var(--muted)}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty .ei{font-size:48px;margin-bottom:10px}
+
+/* DIVIDER */
+.section-lbl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:4px 4px 8px}
+
+/* SCENARIO */
+.scenario-card{background:var(--white);border-radius:16px;padding:15px;margin-bottom:12px;box-shadow:var(--shadow)}
+.sc-row{display:flex;gap:10px;align-items:center;margin-top:10px}
+.sc-input{flex:1;padding:12px;border:2px solid var(--border);border-radius:12px;font-size:20px;font-weight:700;text-align:center;outline:none;-webkit-appearance:none}
+.sc-input:focus{border-color:var(--red)}
+.sc-result{margin-top:10px;font-size:15px;color:var(--muted);text-align:center;line-height:1.5}
+.sc-result b{color:var(--text);font-size:17px}
 </style>
 </head>
 <body>
 
-<!-- ═══════════ DASHBOARD ═══════════ -->
+<!-- ══════════ DASHBOARD ══════════ -->
 <div class="screen active" id="s-dash">
-  <div class="header">
-    <div class="header-row">
+  <div class="hdr">
+    <div class="hdr-row">
       <div>
-        <div class="chip" id="d-month-chip">Junho 2026</div>
+        <div class="chip" id="d-chip">Junho 2026</div>
         <h1>Meu Ponto</h1>
-        <div class="subtitle" id="d-date">segunda-feira, 1 de junho</div>
+        <div class="sub" id="d-date"></div>
       </div>
-      <button class="reset-btn" onclick="confirmReset()">Novo Mês</button>
+      <div class="hdr-btns">
+        <button class="icon-btn" title="Calculadora" onclick="navTo('s-calc')">🧮</button>
+        <button class="icon-btn" title="Configurações" onclick="navTo('s-settings')">⚙️</button>
+      </div>
     </div>
   </div>
   <div class="content">
 
-    <!-- Success banner -->
-    <div class="success-card" id="d-success" style="display:none">
-      <div class="sc-emoji">🎉</div>
-      <h2>Meta Atingida!</h2>
+    <!-- Success -->
+    <div class="success-banner" id="d-success" style="display:none">
+      <div class="se">🎉</div><h2>Meta Atingida!</h2>
       <p>R$ 100,00 de extras garantidos!</p>
     </div>
 
-    <!-- Extras acumuladas -->
-    <div class="card">
-      <div class="card-label">Extras Acumuladas</div>
-      <div class="big-stat red" id="d-accumulated">0 min</div>
-      <div class="progress-wrap">
-        <div class="progress-meta">
-          <span>Meta: 7h 42min</span>
-          <b id="d-pct">0%</b>
-        </div>
-        <div class="progress-track">
-          <div class="progress-bar" id="d-bar" style="width:0%"></div>
-        </div>
+    <!-- TODAY LIVE STATUS (shown if day started but not finished) -->
+    <div id="d-live-today" style="display:none">
+      <div class="today-status">
+        <div class="ts-lbl">📍 Hoje — Saia às</div>
+        <div class="ts-exit" id="d-live-exit">18:08</div>
+        <div class="ts-sub" id="d-live-sub">para fazer +18 min de extra</div>
+        <div class="ts-mini" id="d-live-mini"></div>
       </div>
     </div>
 
-    <!-- Ganhos + Salário -->
-    <div class="two-col">
+    <!-- LUNCH RETURN (shown if went to lunch but hasn't returned) -->
+    <div id="d-lunch-live" style="display:none">
+      <div class="lunch-box">
+        <div class="lb-lbl">🍽 Volte para o trabalho às</div>
+        <div class="lb-time" id="d-lunch-return">14:00</div>
+        <div class="lb-countdown">Tempo restante de intervalo:</div>
+        <div class="lb-timer" id="d-lunch-timer">--:--</div>
+      </div>
+    </div>
+
+    <!-- Extras -->
+    <div class="card">
+      <div class="clabel">Extras Acumuladas</div>
+      <div class="big red" id="d-accum">0 min</div>
+      <div class="prog-wrap">
+        <div class="prog-meta"><span>Meta: 7h 42min</span><b id="d-pct">0%</b></div>
+        <div class="prog-track"><div class="prog-bar" id="d-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Ganho + Salário -->
+    <div class="two">
       <div class="card">
-        <div class="card-label">Ganho Extra</div>
-        <div class="big-stat green" id="d-earned">R$ 0</div>
-        <div class="salary-label" style="margin-top:4px">meta: R$ 100</div>
+        <div class="clabel">Ganho Extra</div>
+        <div class="big green" id="d-earned">R$ 0</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">meta: R$ 100</div>
       </div>
       <div class="card">
-        <div class="card-label">Salário Total</div>
-        <div style="font-size:22px;font-weight:800" id="d-total">R$ 2.500</div>
-        <div class="salary-label" style="margin-top:4px">líquido estimado</div>
+        <div class="clabel">Salário Total</div>
+        <div style="font-size:20px;font-weight:800" id="d-total">R$ 2.500</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">líquido estimado</div>
       </div>
     </div>
 
     <!-- Meta diária -->
     <div class="card">
-      <div class="card-label">Meta Diária</div>
-      <div class="hint-row">
+      <div class="clabel">Progresso do Mês</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="font-size:24px;font-weight:800" id="d-daily-min">18 min/dia</div>
-          <div style="font-size:13px;color:var(--muted);margin-top:3px">07:50 entrada · 18:08 saída</div>
+          <div style="font-size:22px;font-weight:800" id="d-dmin">18 min/dia</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px">07:50 entrada · 18:08 saída</div>
         </div>
-        <div class="hint-badge" id="d-days-badge">-- dias</div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:800" id="d-days-left">-- dias</div>
+          <div style="font-size:11px;color:var(--muted)">restantes</div>
+        </div>
       </div>
     </div>
 
-    <!-- Hoje -->
+    <!-- Today registered -->
     <div class="card" id="d-today-card" style="display:none">
-      <div class="card-label">Hoje</div>
-      <div id="d-today-content"></div>
+      <div class="clabel">Registrado Hoje</div>
+      <div id="d-today-body"></div>
     </div>
 
-    <!-- Actions -->
-    <button class="btn-main" onclick="goRegister()">⏱ Registrar Hoje</button>
-    <button class="btn-sec" onclick="goHistory()">📋 Ver Histórico</button>
+    <button class="btn btn-red" onclick="navTo('s-register')">⏱ Registrar Hoje</button>
+    <button class="btn btn-white" onclick="navTo('s-history')">📋 Histórico do Mês</button>
   </div>
 </div>
 
-<!-- ═══════════ REGISTER ═══════════ -->
+<!-- ══════════ REGISTER ══════════ -->
 <div class="screen" id="s-register">
-  <div class="header">
-    <button class="back-btn" onclick="goTo('s-dash')">← Voltar</button>
-    <h1>Registrar Hoje</h1>
-    <div class="subtitle" id="r-date"></div>
+  <div class="hdr">
+    <button class="back-btn" onclick="navTo('s-dash')">← Voltar</button>
+    <h1 id="r-title">Registrar Hoje</h1>
+    <div class="sub" id="r-date"></div>
   </div>
   <div class="content">
-    <div class="card">
-      <div class="form-group">
-        <label class="form-label">🕐 Que horas entrou?</label>
-        <input type="time" class="form-input" id="i-entry" value="07:50">
-      </div>
-      <div class="form-group">
-        <label class="form-label">🍽 Saiu pro almoço às?</label>
-        <input type="time" class="form-input" id="i-lout" value="12:00">
-      </div>
-      <div class="form-group">
-        <label class="form-label">🔙 Voltou do almoço às?</label>
-        <input type="time" class="form-input" id="i-lin" value="14:00">
-      </div>
-      <div class="toggle-row">
-        <span class="toggle-lbl">📅 É sábado?</span>
-        <button class="toggle" id="t-sat" onclick="toggleSat()"></button>
+
+    <!-- AI -->
+    <div id="r-ai-wrap" style="display:none">
+      <button class="btn btn-purple" onclick="triggerPhoto()">📷 Ler Screenshot Automático</button>
+      <input type="file" id="img-file" accept="image/*" style="display:none" onchange="handlePhoto(event)">
+      <div id="ai-loading" style="display:none"><div class="loading-box"><div class="spinner"></div><p>Analisando com IA...</p></div></div>
+      <div id="ai-alert" style="display:none"></div>
+      <p style="text-align:center;font-size:12px;color:var(--muted);margin:-4px 0 12px">ou preencha os campos abaixo manualmente</p>
+    </div>
+
+    <!-- Atraso warning -->
+    <div id="r-atraso" style="display:none">
+      <div class="atraso-card">
+        <div><div class="atraso-lbl">⚠️ Atraso detectado</div><div style="font-size:12px;color:var(--red2);margin-top:2px" id="r-atraso-sub">Será descontado do salário</div></div>
+        <div class="atraso-val" id="r-atraso-val">0 min</div>
       </div>
     </div>
-    <button class="btn-main" onclick="doCalculate()">Calcular Horário de Saída</button>
-    <button class="btn-ghost" onclick="goTo('s-dash')">Cancelar</button>
+
+    <!-- TIME INPUTS (all with "Agora" buttons) -->
+    <div class="card">
+      <div class="time-row">
+        <label class="time-label">🕐 Entrada</label>
+        <div class="time-inputs">
+          <input type="time" class="finput" id="i-entry" oninput="recalc()">
+          <button class="now-btn" onclick="setNow('i-entry')">AGORA</button>
+        </div>
+      </div>
+      <div class="time-row">
+        <label class="time-label">🍽 Saída Almoço</label>
+        <div class="time-inputs">
+          <input type="time" class="finput" id="i-lout" oninput="recalc()">
+          <button class="now-btn" onclick="setNow('i-lout')">AGORA</button>
+        </div>
+      </div>
+      <div class="time-row">
+        <label class="time-label">🔙 Retorno Almoço</label>
+        <div class="time-inputs">
+          <input type="time" class="finput" id="i-lin" oninput="recalc()">
+          <button class="now-btn" onclick="setNow('i-lin')">AGORA</button>
+        </div>
+      </div>
+      <div class="time-row">
+        <label class="time-label">🚪 Saída</label>
+        <div class="time-inputs">
+          <input type="time" class="finput" id="i-exit" oninput="recalc()">
+          <button class="now-btn" onclick="setNow('i-exit')">AGORA</button>
+        </div>
+      </div>
+      <div class="tog-row">
+        <span class="tog-lbl">📅 É sábado?</span>
+        <button class="tog" id="t-sat" onclick="toggleSat()"></button>
+      </div>
+    </div>
+
+    <!-- LUNCH RETURN INDICATOR -->
+    <div id="r-lunch-box" style="display:none">
+      <div class="lunch-box">
+        <div class="lb-lbl">🍽 Volte para o trabalho às</div>
+        <div class="lb-time" id="r-lunch-return">14:00</div>
+        <div class="lb-countdown">Tempo restante:</div>
+        <div class="lb-timer" id="r-lunch-timer">--:--</div>
+      </div>
+    </div>
+
+    <!-- TARGET EXIT -->
+    <div id="r-tgt" style="display:none">
+      <div class="tgt-box">
+        <div class="tgt-lbl">Saia às</div>
+        <div class="tgt-time" id="r-tgt-time">18:08</div>
+        <div class="tgt-sub" id="r-tgt-sub">para fazer +18 min de extra</div>
+      </div>
+    </div>
+
+    <!-- LIVE BREAKDOWN -->
+    <div id="r-live" style="display:none">
+      <div class="live-box" id="r-breakdown"></div>
+    </div>
+
+    <!-- SALARY IMPACT (shown when day complete) -->
+    <div id="r-impact" style="display:none">
+      <div class="impact-card">
+        <div class="impact-title">💰 Impacto no Salário</div>
+        <div class="impact-row"><span class="il">Extra hoje</span><span class="iv pos" id="imp-today"></span></div>
+        <div class="impact-row"><span class="il">Total do mês</span><span class="iv" id="imp-total"></span></div>
+        <div class="impact-row"><span class="il">Ganho extra</span><span class="iv pos" id="imp-earned"></span></div>
+        <div class="impact-row total"><span class="il" style="font-weight:700">Salário estimado</span><span class="iv" id="imp-salary"></span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-green" id="r-save" style="display:none" onclick="saveDay()">💾 Salvar Dia</button>
+    <button class="btn-ghost" onclick="navTo('s-dash')">Cancelar</button>
   </div>
 </div>
 
-<!-- ═══════════ RESULT ═══════════ -->
-<div class="screen" id="s-result">
-  <div class="header">
-    <button class="back-btn" onclick="goTo('s-register')">← Recalcular</button>
-    <h1>Resultado</h1>
-    <div class="subtitle" id="res-date"></div>
-  </div>
-  <div class="content">
-    <div class="card">
-      <div class="card-label">Saída Ideal</div>
-      <div class="result-hero">
-        <div class="result-time" id="res-exit">18:08</div>
-        <div class="result-sub" id="res-exit-sub">para atingir +18 min de extra hoje</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="result-row">
-        <span class="rl">Extras de hoje</span>
-        <span class="rv pos" id="res-today">+18 min</span>
-      </div>
-      <div class="result-row">
-        <span class="rl">Entrada antecipada</span>
-        <span class="rv" id="res-early">+10 min</span>
-      </div>
-      <div class="result-row">
-        <span class="rl">Almoço</span>
-        <span class="rv" id="res-lunch">±0 min</span>
-      </div>
-      <div class="result-row">
-        <span class="rl">Total acumulado</span>
-        <span class="rv" id="res-accumulated">0h 18min</span>
-      </div>
-      <div class="result-row">
-        <span class="rl">Falta para R$ 100</span>
-        <span class="rv gold" id="res-remaining">7h 24min</span>
-      </div>
-      <div class="result-row">
-        <span class="rl">Ganho acumulado</span>
-        <span class="rv pos" id="res-earned">R$ 3,90</span>
-      </div>
-    </div>
-
-    <div class="alert-success" id="res-alert" style="display:none">🎉 Meta de R$ 100 atingida este mês!</div>
-
-    <button class="btn-save" onclick="saveDay()">💾 Salvar Dia</button>
-    <button class="btn-ghost" onclick="goTo('s-dash')">Cancelar</button>
-  </div>
-</div>
-
-<!-- ═══════════ HISTORY ═══════════ -->
+<!-- ══════════ HISTORY ══════════ -->
 <div class="screen" id="s-history">
-  <div class="header">
-    <button class="back-btn" onclick="goTo('s-dash')">← Voltar</button>
+  <div class="hdr">
+    <button class="back-btn" onclick="navTo('s-dash')">← Voltar</button>
     <h1>Histórico</h1>
-    <div class="subtitle" id="h-month"></div>
+    <div class="sub" id="h-sub"></div>
   </div>
   <div class="content">
-    <div class="card" id="h-content">
-      <div class="empty"><div class="e-icon">📭</div><p>Nenhum dia registrado</p></div>
+    <div class="alert info" style="font-size:12px;padding:10px 14px">💡 Toque em qualquer dia para editar</div>
+    <div class="card" id="h-list"></div>
+    <div class="card" id="h-sum" style="display:none">
+      <div class="clabel">Resumo do Mês</div>
+      <div class="srow"><span class="sl">Total extras</span><span class="sv pos" id="h-total"></span></div>
+      <div class="srow"><span class="sl">Ganho extra</span><span class="sv pos" id="h-earned"></span></div>
+      <div class="srow"><span class="sl">Salário estimado</span><span class="sv" id="h-salary"></span></div>
+      <div class="srow"><span class="sl">Dias registrados</span><span class="sv" id="h-days"></span></div>
+      <div class="srow"><span class="sl">Falta para R$ 100</span><span class="sv" id="h-remaining"></span></div>
     </div>
-    <div class="card" id="h-summary" style="display:none">
-      <div class="card-label">Resumo do Mês</div>
-      <div class="result-row">
-        <span class="rl">Total de extras</span>
-        <span class="rv pos" id="h-total"></span>
+  </div>
+</div>
+
+<!-- ══════════ CALCULATOR ══════════ -->
+<div class="screen" id="s-calc">
+  <div class="hdr">
+    <button class="back-btn" onclick="navTo('s-dash')">← Voltar</button>
+    <h1>Calculadora</h1>
+    <div class="sub">Simule cenários do seu dia</div>
+  </div>
+  <div class="content">
+
+    <!-- Retorno do almoço -->
+    <div class="scenario-card">
+      <div class="clabel">⏰ Que horas eu volto do almoço?</div>
+      <div class="time-row" style="margin-bottom:0">
+        <label class="time-label">Saí para almoço às</label>
+        <div class="time-inputs">
+          <input type="time" class="finput sc-input" id="c-lout" oninput="calcLunchReturn()" style="font-size:20px">
+          <button class="now-btn" onclick="setNow('c-lout');calcLunchReturn()">AGORA</button>
+        </div>
       </div>
-      <div class="result-row">
-        <span class="rl">Ganho extra</span>
-        <span class="rv pos" id="h-earned"></span>
-      </div>
-      <div class="result-row">
-        <span class="rl">Salário estimado</span>
-        <span class="rv" id="h-salary"></span>
-      </div>
+      <div class="sc-result" id="c-lunch-res" style="display:none"></div>
     </div>
+
+    <!-- Cenário de saída -->
+    <div class="scenario-card">
+      <div class="clabel">💡 E se eu sair em horário X?</div>
+      <div class="time-row">
+        <label class="time-label">Entrada</label>
+        <div class="time-inputs">
+          <input type="time" class="finput sc-input" id="c-entry" oninput="calcScenario()" style="font-size:20px" value="07:50">
+          <button class="now-btn" onclick="setNow('c-entry');calcScenario()">AGORA</button>
+        </div>
+      </div>
+      <div class="time-row">
+        <label class="time-label">Saída almoço</label>
+        <div class="time-inputs">
+          <input type="time" class="finput sc-input" id="c-slout" oninput="calcScenario()" style="font-size:20px">
+        </div>
+      </div>
+      <div class="time-row">
+        <label class="time-label">Retorno almoço</label>
+        <div class="time-inputs">
+          <input type="time" class="finput sc-input" id="c-slin" oninput="calcScenario()" style="font-size:20px">
+        </div>
+      </div>
+      <div class="time-row" style="margin-bottom:0">
+        <label class="time-label">Se eu sair às</label>
+        <div class="time-inputs">
+          <input type="time" class="finput sc-input" id="c-exit" oninput="calcScenario()" style="font-size:20px" value="18:08">
+        </div>
+      </div>
+      <div class="sc-result" id="c-scenario-res" style="display:none"></div>
+    </div>
+
+    <!-- Quantas horas pra ganhar X -->
+    <div class="scenario-card">
+      <div class="clabel">💰 Quanto vou ganhar de extra?</div>
+      <div class="time-row" style="margin-bottom:0">
+        <label class="time-label">Horas extras feitas</label>
+        <div class="time-inputs">
+          <input type="time" class="finput sc-input" id="c-hours" oninput="calcEarnings()" style="font-size:20px" placeholder="00:00">
+        </div>
+      </div>
+      <div class="sc-result" id="c-earn-res" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SETTINGS ══════════ -->
+<div class="screen" id="s-settings">
+  <div class="hdr">
+    <button class="back-btn" onclick="navTo('s-dash')">← Voltar</button>
+    <h1>Configurações</h1>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="clabel">Chave API (para leitura de screenshot)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Obtenha em <b>console.anthropic.com</b> → API Keys → Create Key. Fica salvo só no seu celular.</p>
+      <input type="password" class="key-input" id="key-input" placeholder="sk-ant-api03-...">
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-green" style="margin:0;flex:1;padding:13px;font-size:14px" onclick="saveKey()">💾 Salvar</button>
+        <button class="btn btn-white" style="margin:0;flex:1;padding:13px;font-size:14px;color:var(--red)" onclick="clearKey()">🗑 Remover</button>
+      </div>
+      <div style="margin-top:10px" id="key-status"></div>
+    </div>
+
+    <div class="card">
+      <div class="clabel">Contrato — Jupiter TI</div>
+      <div class="set-row"><span class="set-lbl">Salário Base</span><span class="set-val">R$ 2.093,29</span></div>
+      <div class="set-row"><span class="set-lbl">Periculosidade (30%)</span><span class="set-val">R$ 627,99</span></div>
+      <div class="set-row"><span class="set-lbl">Bruto Total</span><span class="set-val">R$ 2.721,28</span></div>
+      <div class="set-row"><span class="set-lbl">INSS</span><span class="set-val">R$ 220,61</span></div>
+      <div class="set-row"><span class="set-lbl">IRRF</span><span class="set-val" style="color:var(--green)">R$ 0 (isento)</span></div>
+      <div class="set-row"><span class="set-lbl">Líquido Base</span><span class="set-val">R$ 2.500,67</span></div>
+      <div class="set-row"><span class="set-lbl">Hora Extra (líquido)</span><span class="set-val">R$ 12,99/h</span></div>
+      <div class="set-row"><span class="set-lbl">Meta Extras</span><span class="set-val">7h42min = R$ 100</span></div>
+    </div>
+
+    <div class="card">
+      <div class="clabel">Escala de Trabalho</div>
+      <div class="set-row"><span class="set-lbl">Seg-Sex</span><span class="set-val">08:00 → 18:00</span></div>
+      <div class="set-row"><span class="set-lbl">Sábado</span><span class="set-val">08:00 → 12:00</span></div>
+      <div class="set-row"><span class="set-lbl">Almoço padrão</span><span class="set-val">2 horas</span></div>
+    </div>
+
+    <button class="btn btn-white" onclick="confirmReset()" style="color:var(--red)">🔄 Iniciar Novo Mês</button>
   </div>
 </div>
 
 <script>
 // ═══ CONSTANTS ═══
-const BASE = 2093.29;
-const GROSS = BASE * 1.30;           // 2721.28
-const NET_BASE = 2500.67;
-const HE_GROSS = (BASE / 220) * 1.5; // 14.27/h
-const HE_NET   = HE_GROSS * 0.91;    // 12.99/h (after 9% INSS)
-const TARGET_MIN = Math.ceil(100 / HE_NET * 60); // 462 min = 7h42min
-const DAILY_TARGET = 18;
-const STD_START = 480;   // 08:00
-const STD_END   = 1080;  // 18:00
-const STD_LUNCH = 120;
-const SAT_END   = 720;   // 12:00
+var NET_BASE  = 2500.67;
+var HE_GROSS  = (2093.29/220)*1.5;   // ~14.27/h
+var HE_NET    = HE_GROSS*0.91;        // ~12.99/h
+var TGT_MIN   = Math.ceil(100/HE_NET*60); // 462 min = 7h42min
+var DAILY_TGT = 18;
+var STD_START = 480;   // 08:00
+var STD_END   = 1080;  // 18:00
+var STD_LUNCH = 120;   // 2h
+var SAT_DUR   = 240;   // 4h
 
 // ═══ STATE ═══
-let isSat = false;
-let calcResult = null;
+var isSat = false;
+var lunchTimer = null;
+var dashTimer = null;
+var editingDate = null;
 
 // ═══ STORAGE ═══
-function monthKey() {
-  const n = new Date();
-  return `ponto_${n.getFullYear()}_${n.getMonth()+1}`;
-}
-function getData() {
-  try { return JSON.parse(localStorage.getItem(monthKey())) || {entries:[],total:0}; }
-  catch { return {entries:[],total:0}; }
-}
-function setData(d) { localStorage.setItem(monthKey(), JSON.stringify(d)); }
+function mkey(){var n=new Date();return 'ponto_'+n.getFullYear()+'_'+(n.getMonth()+1);}
+function getData(){try{return JSON.parse(localStorage.getItem(mkey()))||{entries:[],total:0};}catch(e){return{entries:[],total:0};}}
+function setData(d){localStorage.setItem(mkey(),JSON.stringify(d));}
+function getKey(){return localStorage.getItem('akey')||'';}
 
 // ═══ HELPERS ═══
-function t2m(s) { const [h,m] = s.split(':').map(Number); return h*60+m; }
-function m2t(m) { return `${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
-function mDisp(m) {
-  const a=Math.abs(m), h=Math.floor(a/60), min=a%60, sg=m<0?'-':'';
-  return h>0 ? `${sg}${h}h ${String(min).padStart(2,'0')}min` : `${sg}${min} min`;
-}
-function curr(v) { return 'R$ '+v.toFixed(2).replace('.',','); }
-function todayStr() { return new Date().toISOString().split('T')[0]; }
-function fmtDate(d) { return new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); }
-function fmtFull() { return new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}); }
-function monthName() { return new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); }
-function daysLeft() {
-  const n=new Date(), y=n.getFullYear(), mo=n.getMonth(), last=new Date(y,mo+1,0).getDate();
-  let c=0;
-  for(let d=n.getDate();d<=last;d++) { if(new Date(y,mo,d).getDay()!==0) c++; }
+function t2m(s){if(!s||s==='')return null;var p=s.split(':');if(p.length<2)return null;return parseInt(p[0],10)*60+parseInt(p[1],10);}
+function m2t(m){m=((m%1440)+1440)%1440;return pad(Math.floor(m/60))+':'+pad(m%60);}
+function pad(n){return n<10?'0'+n:''+n;}
+function mDisp(m){var a=Math.abs(Math.round(m)),h=Math.floor(a/60),mn=a%60,sg=m<0?'-':'';return h>0?sg+h+'h '+pad(mn)+'min':sg+mn+' min';}
+function curr(v){return 'R$ '+Math.abs(v).toFixed(2).replace('.',',');}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function fmtShort(ds){return new Date(ds+'T12:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});}
+function fmtFull(){return new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});}
+function mname(){return new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});}
+function nowTime(){var n=new Date();return pad(n.getHours())+':'+pad(n.getMinutes());}
+function isTodaySat(){return new Date().getDay()===6;}
+function daysLeft(){
+  var n=new Date(),y=n.getFullYear(),mo=n.getMonth(),last=new Date(y,mo+1,0).getDate(),c=0;
+  for(var d=n.getDate();d<=last;d++)if(new Date(y,mo,d).getDay()!==0)c++;
   return c;
 }
 
 // ═══ NAVIGATION ═══
-function goTo(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+function navTo(id){
+  clearInterval(lunchTimer); clearInterval(dashTimer);
+  var screens=document.querySelectorAll('.screen');
+  for(var i=0;i<screens.length;i++)screens[i].classList.remove('active');
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  if(id==='s-dash')renderDash();
+  if(id==='s-register')initRegister();
+  if(id==='s-history')renderHistory();
+  if(id==='s-settings')renderSettings();
+  if(id==='s-calc')initCalc();
 }
-function goRegister() {
-  document.getElementById('r-date').textContent = fmtFull();
-  document.getElementById('res-date').textContent = fmtFull();
-  goTo('s-register');
-}
-function goHistory() {
-  renderHistory();
-  document.getElementById('h-month').textContent = monthName();
-  goTo('s-history');
+
+// ═══ SET NOW BUTTON ═══
+function setNow(inputId){
+  var el=document.getElementById(inputId);
+  el.value=nowTime();
+  el.className=el.className.replace(' filled','').replace(' late','')+' filled';
+  if(inputId==='i-entry'||inputId==='i-lout'||inputId==='i-lin'||inputId==='i-exit')recalc();
 }
 
 // ═══ DASHBOARD ═══
-function renderDash() {
-  const d = getData();
-  const total = d.total || 0;
-  const earned = (total/60)*HE_NET;
-  const pct = Math.min(100, Math.round(total/TARGET_MIN*100));
-  const totalSalary = NET_BASE + earned;
-  const dl = daysLeft();
-  const mn = monthName();
+function renderDash(){
+  var d=getData();
+  var total=d.total||0;
+  var earned=(total/60)*HE_NET;
+  var pct=Math.min(100,Math.round(total/TGT_MIN*100));
+  var dl=daysLeft();
+  var mn=mname();
 
-  document.getElementById('d-month-chip').textContent = mn.charAt(0).toUpperCase()+mn.slice(1);
-  document.getElementById('d-date').textContent = fmtFull();
-  document.getElementById('d-accumulated').textContent = mDisp(total);
-  document.getElementById('d-pct').textContent = pct+'%';
+  document.getElementById('d-chip').textContent=mn.charAt(0).toUpperCase()+mn.slice(1);
+  document.getElementById('d-date').textContent=fmtFull();
+  document.getElementById('d-accum').textContent=mDisp(total);
+  document.getElementById('d-pct').textContent=pct+'%';
+  var bar=document.getElementById('d-bar');
+  bar.style.width=pct+'%';
+  bar.className='prog-bar'+(pct>=100?' done':'');
+  document.getElementById('d-earned').textContent=curr(earned);
+  document.getElementById('d-total').textContent=curr(NET_BASE+earned);
+  document.getElementById('d-success').style.display=total>=TGT_MIN?'block':'none';
 
-  const bar = document.getElementById('d-bar');
-  bar.style.width = pct+'%';
-  bar.className = 'progress-bar'+(pct>=100?' done':'');
+  var rem=Math.max(0,TGT_MIN-total);
+  var perDay=dl>0?Math.ceil(rem/dl):DAILY_TGT;
+  document.getElementById('d-dmin').textContent=perDay+' min/dia';
+  document.getElementById('d-days-left').textContent=dl+' dias';
 
-  document.getElementById('d-earned').textContent = curr(earned);
-  document.getElementById('d-total').textContent = curr(totalSalary);
-  document.getElementById('d-days-badge').textContent = dl+' dias';
-  document.getElementById('d-success').style.display = total>=TARGET_MIN ? 'block':'none';
+  // Today's entry
+  var today=todayStr();
+  var te=(d.entries||[]).find(function(e){return e.date===today;});
+  var tc=document.getElementById('d-today-card');
+  var liveDiv=document.getElementById('d-live-today');
+  var lunchDiv=document.getElementById('d-lunch-live');
 
-  // Daily remaining
-  const remaining = Math.max(0, TARGET_MIN - total);
-  const perDay = dl>0 ? Math.ceil(remaining/dl) : DAILY_TARGET;
-  document.getElementById('d-daily-min').textContent = perDay+' min/dia';
-
-  // Today
-  const te = d.entries?.find(e=>e.date===todayStr());
-  const tc = document.getElementById('d-today-card');
-  if(te) {
+  if(te){
+    // Full day registered
     tc.style.display='block';
-    document.getElementById('d-today-content').innerHTML = `
-      <div class="today-item"><span class="lbl">Entrada</span><span class="val">${te.entry}</span></div>
-      <div class="today-item"><span class="lbl">Extra</span><span class="pos">+${te.extra} min</span></div>
-      <div class="today-item"><span class="lbl">Saída</span><span class="val">${te.exit||'—'}</span></div>
-    `;
-  } else { tc.style.display='none'; }
-}
-
-// ═══ SATURDAY TOGGLE ═══
-function toggleSat() {
-  isSat = !isSat;
-  document.getElementById('t-sat').classList.toggle('on', isSat);
-  // Adjust lunch fields
-  document.getElementById('i-lout').closest('.form-group').style.opacity = isSat ? '0.4' : '1';
-  document.getElementById('i-lin').closest('.form-group').style.opacity = isSat ? '0.4' : '1';
-}
-
-// ═══ CALCULATE ═══
-function doCalculate() {
-  const entry = document.getElementById('i-entry').value;
-  const lout  = document.getElementById('i-lout').value;
-  const lin   = document.getElementById('i-lin').value;
-  if(!entry || (!isSat && (!lout||!lin))) { alert('Preencha todos os horários!'); return; }
-
-  const entryM = t2m(entry);
-  const earlyM = Math.max(0, STD_START - entryM); // early arrival bonus
-
-  let lunchDiff = 0, exitM, extraToday;
-
-  if(isSat) {
-    // Saturday: 4h + daily target
-    const neededWork = 4*60 + DAILY_TARGET;
-    exitM = entryM + neededWork;
-    extraToday = DAILY_TARGET;
-    lunchDiff = 0;
+    liveDiv.style.display='none';
+    lunchDiv.style.display='none';
+    var ex=te.extra;
+    document.getElementById('d-today-body').innerHTML=
+      '<div class="trow"><span class="tl">Entrada</span><span class="tv">'+(te.entry||'—')+'</span></div>'+
+      (te.lout?'<div class="trow"><span class="tl">Almoço</span><span class="tv">'+te.lout+' → '+(te.lin||'?')+'</span></div>':'')+
+      '<div class="trow"><span class="tl">Saída</span><span class="tv">'+(te.exit||'—')+'</span></div>'+
+      '<div class="trow"><span class="tl">Extra</span><span class="'+(ex>=0?'tp':'tn')+'">'+(ex>=0?'+':'')+mDisp(ex)+'</span></div>';
   } else {
-    const loutM = t2m(lout);
-    const linM  = t2m(lin);
-    const lunchTaken = linM - loutM;
-    lunchDiff = STD_LUNCH - lunchTaken; // + = short lunch (good), - = long lunch (bad)
+    tc.style.display='none';
+    // Check localStorage for in-progress day
+    var wip=getWIP();
+    if(wip && wip.entry){
+      var entryM=t2m(wip.entry);
+      if(wip.lout && !wip.lin){
+        // On lunch
+        liveDiv.style.display='none';
+        lunchDiv.style.display='block';
+        var returnM=t2m(wip.lout)+STD_LUNCH;
+        document.getElementById('d-lunch-return').textContent=m2t(returnM);
+        startLunchCountdown('d-lunch-timer',returnM);
+      } else if(wip.entry && !wip.exit){
+        // At work, calculate target exit
+        lunchDiv.style.display='none';
+        liveDiv.style.display='block';
+        var earlyM=Math.max(0,STD_START-entryM);
+        var lunchDiff=0;
+        if(wip.lout&&wip.lin) lunchDiff=STD_LUNCH-(t2m(wip.lin)-t2m(wip.lout));
+        var extraSoFar=earlyM+Math.max(0,lunchDiff);
+        var stillNeed=Math.max(0,DAILY_TGT-extraSoFar);
+        var linM=wip.lin?t2m(wip.lin):null;
+        var tgtExit;
+        if(linM){
+          var morningM=t2m(wip.lout)-entryM;
+          tgtExit=linM+(480-morningM)+stillNeed;
+        } else {
+          tgtExit=STD_END+stillNeed;
+        }
+        document.getElementById('d-live-exit').textContent=m2t(tgtExit);
+        document.getElementById('d-live-sub').textContent=stillNeed>0?'para fazer +'+DAILY_TGT+' min de extra':'✅ meta atingida!';
+        var mini='<span class="ts-chip">Entrou '+wip.entry+'</span>';
+        if(wip.lout) mini+='<span class="ts-chip">Almoço '+wip.lout+'</span>';
+        if(wip.lin) mini+='<span class="ts-chip">Voltou '+wip.lin+'</span>';
+        document.getElementById('d-live-mini').innerHTML=mini;
+      } else {
+        liveDiv.style.display='none';
+        lunchDiv.style.display='none';
+      }
+    } else {
+      liveDiv.style.display='none';
+      lunchDiv.style.display='none';
+    }
+  }
+}
 
-    const extraSoFar = earlyM + lunchDiff;
-    const stillNeed = Math.max(0, DAILY_TARGET - extraSoFar);
-    exitM = STD_END + stillNeed;
-    extraToday = Math.max(0, extraSoFar + stillNeed);
-    // Cap daily extra at reasonable amount
-    extraToday = Math.max(DAILY_TARGET, Math.min(extraToday, extraSoFar >= DAILY_TARGET ? extraSoFar : DAILY_TARGET));
+// ═══ WIP (Work In Progress - today's partial data) ═══
+function getWIP(){try{return JSON.parse(localStorage.getItem('wip_'+todayStr()))||null;}catch(e){return null;}}
+function saveWIP(data){localStorage.setItem('wip_'+todayStr(),JSON.stringify(data));}
+function clearWIP(){localStorage.removeItem('wip_'+todayStr());}
+
+// ═══ REGISTER ═══
+function initRegister(){
+  editingDate=null;
+  document.getElementById('r-title').textContent='Registrar Hoje';
+  document.getElementById('r-date').textContent=fmtFull();
+  document.getElementById('r-ai-wrap').style.display=getKey()?'block':'none';
+  document.getElementById('ai-loading').style.display='none';
+  document.getElementById('ai-alert').style.display='none';
+  document.getElementById('r-live').style.display='none';
+  document.getElementById('r-tgt').style.display='none';
+  document.getElementById('r-save').style.display='none';
+  document.getElementById('r-impact').style.display='none';
+  document.getElementById('r-atraso').style.display='none';
+  document.getElementById('r-lunch-box').style.display='none';
+  document.getElementById('r-breakdown').innerHTML='';
+  isSat=isTodaySat();
+  document.getElementById('t-sat').classList.toggle('on',isSat);
+
+  // Pre-fill from WIP
+  var wip=getWIP();
+  var ids=['i-entry','i-lout','i-lin','i-exit'];
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    var key=ids[i].replace('i-','');
+    if(key==='lout')key='lout';
+    if(key==='lin')key='lin';
+    el.value=(wip&&wip[key.replace('i-','')])||'';
+    el.className='finput'+(el.value?' filled':'');
+  }
+  if(wip){
+    document.getElementById('i-entry').value=wip.entry||'';
+    document.getElementById('i-lout').value=wip.lout||'';
+    document.getElementById('i-lin').value=wip.lin||'';
+    document.getElementById('i-exit').value=wip.exit||'';
+    markAllFilled();
+  }
+  recalc();
+}
+
+function fillForEdit(entry){
+  editingDate=entry.date;
+  document.getElementById('r-title').textContent='Editar '+fmtShort(entry.date);
+  document.getElementById('r-date').textContent=fmtShort(entry.date);
+  document.getElementById('r-ai-wrap').style.display='none';
+  document.getElementById('r-atraso').style.display='none';
+  isSat=entry.sat||false;
+  document.getElementById('t-sat').classList.toggle('on',isSat);
+  document.getElementById('i-entry').value=entry.entry||'';
+  document.getElementById('i-lout').value=entry.lout||'';
+  document.getElementById('i-lin').value=entry.lin||'';
+  document.getElementById('i-exit').value=entry.exit||'';
+  markAllFilled();
+  recalc();
+}
+
+function markAllFilled(){
+  var ids=['i-entry','i-lout','i-lin','i-exit'];
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    el.className='finput'+(el.value?' filled':'');
+  }
+}
+
+function toggleSat(){
+  isSat=!isSat;
+  document.getElementById('t-sat').classList.toggle('on',isSat);
+  if(isSat){document.getElementById('i-lout').value='';document.getElementById('i-lin').value='';}
+  document.getElementById('i-lout').style.opacity=isSat?'0.35':'1';
+  document.getElementById('i-lin').style.opacity=isSat?'0.35':'1';
+  recalc();
+}
+
+function row(label,valHtml){return '<div class="lrow"><span class="ll">'+label+'</span>'+valHtml+'</div>';}
+
+function recalc(){
+  var entry=document.getElementById('i-entry').value;
+  var lout=document.getElementById('i-lout').value;
+  var lin=document.getElementById('i-lin').value;
+  var exit=document.getElementById('i-exit').value;
+
+  // Mark fields
+  var ids=['i-entry','i-lout','i-lin','i-exit'];
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    el.className='finput'+(el.value?' filled':'');
   }
 
-  const d = getData();
-  const prevTotal = d.total || 0;
-  const addMin = Math.max(0, extraToday);
-  const newTotal = prevTotal + addMin;
-  const earned = (newTotal/60)*HE_NET;
-  const remaining = Math.max(0, TARGET_MIN - newTotal);
-  const canLeaveEarly = !isSat && (earlyM + lunchDiff) >= DAILY_TARGET;
+  // Save WIP (only for today)
+  if(!editingDate){
+    saveWIP({entry:entry,lout:lout,lin:lin,exit:exit});
+  }
 
-  calcResult = { entry, lout, lin, exitTime: m2t(exitM), extraToday: addMin, newTotal, earned, remaining, earlyM, lunchDiff, isSat };
-
-  // Render result
-  const exitEl = document.getElementById('res-exit');
-  exitEl.textContent = m2t(exitM);
-  exitEl.className = 'result-time'+(canLeaveEarly?' early':'');
-
-  document.getElementById('res-exit-sub').textContent = canLeaveEarly
-    ? '✅ meta atingida! pode sair mais cedo'
-    : `para atingir +${DAILY_TARGET} min de extra hoje`;
-
-  document.getElementById('res-today').textContent = '+'+addMin+' min';
-
-  document.getElementById('res-early').textContent = earlyM > 0
-    ? '+'+earlyM+' min' : '0 min';
-
-  const lunchEl = document.getElementById('res-lunch');
-  if(isSat) { lunchEl.textContent = '—'; lunchEl.className='rv'; }
-  else if(lunchDiff>0) { lunchEl.textContent='+'+lunchDiff+' min'; lunchEl.className='rv pos'; }
-  else if(lunchDiff<0) { lunchEl.textContent=lunchDiff+' min'; lunchEl.className='rv neg'; }
-  else { lunchEl.textContent='±0 min'; lunchEl.className='rv'; }
-
-  document.getElementById('res-accumulated').textContent = mDisp(newTotal);
-
-  const remEl = document.getElementById('res-remaining');
-  if(remaining<=0) { remEl.textContent='✅ Meta atingida!'; remEl.className='rv pos'; }
-  else { remEl.textContent=mDisp(remaining); remEl.className='rv gold'; }
-
-  document.getElementById('res-earned').textContent = curr(earned);
-  document.getElementById('res-alert').style.display = newTotal>=TARGET_MIN ? 'block':'none';
-
-  goTo('s-result');
-}
-
-// ═══ SAVE ═══
-function saveDay() {
-  if(!calcResult) return;
-  const d = getData();
-  const today = todayStr();
-  d.entries = (d.entries||[]).filter(e=>e.date!==today);
-  d.entries.push({
-    date: today,
-    entry: calcResult.entry,
-    lout: calcResult.lout,
-    lin: calcResult.lin,
-    exit: calcResult.exitTime,
-    extra: calcResult.extraToday,
-    sat: calcResult.isSat
-  });
-  d.total = d.entries.reduce((s,e)=>s+e.extra,0);
-  setData(d);
-  goTo('s-dash');
-  renderDash();
-}
-
-// ═══ HISTORY ═══
-function renderHistory() {
-  const d = getData();
-  const entries = d.entries||[];
-  const hc = document.getElementById('h-content');
-  const hs = document.getElementById('h-summary');
-
-  if(entries.length===0) {
-    hc.innerHTML='<div class="empty"><div class="e-icon">📭</div><p>Nenhum dia registrado ainda</p></div>';
-    hs.style.display='none';
+  if(!entry){
+    document.getElementById('r-live').style.display='none';
+    document.getElementById('r-tgt').style.display='none';
+    document.getElementById('r-save').style.display='none';
+    document.getElementById('r-impact').style.display='none';
+    document.getElementById('r-atraso').style.display='none';
+    document.getElementById('r-lunch-box').style.display='none';
+    clearInterval(lunchTimer);
     return;
   }
 
-  const sorted = [...entries].sort((a,b)=>b.date.localeCompare(a.date));
-  hc.innerHTML = sorted.map(e=>{
-    const earn = (e.extra/60)*HE_NET;
-    return `<div class="hist-item">
-      <div>
-        <div class="hist-date">${fmtDate(e.date)}</div>
-        <div class="hist-sub">${e.entry} → ${e.exit||'—'}${e.sat?' · Sáb':''}</div>
-      </div>
-      <div class="hist-right">
-        <div class="hist-extra">+${e.extra} min</div>
-        <div class="hist-earn">${curr(earn)}</div>
-      </div>
-    </div>`;
-  }).join('');
+  var entryM=t2m(entry);
 
-  const total = d.total||0;
-  const earned = (total/60)*HE_NET;
-  document.getElementById('h-total').textContent = mDisp(total);
-  document.getElementById('h-earned').textContent = curr(earned);
-  document.getElementById('h-salary').textContent = curr(NET_BASE+earned);
+  // Atraso detection
+  var atrasM=entryM-STD_START;
+  if(atrasM>0 && !isSat){
+    document.getElementById('r-atraso').style.display='flex';
+    document.getElementById('r-atraso-val').textContent=mDisp(atrasM);
+    document.getElementById('r-atraso-sub').textContent='Será descontado: '+curr((atrasM/60)*(2093.29/220));
+    document.getElementById('i-entry').classList.add('late');
+  } else {
+    document.getElementById('r-atraso').style.display='none';
+  }
+
+  // Early arrival
+  var earlyM=Math.max(0,STD_START-entryM);
+  var rows='';
+  if(earlyM>0)rows+=row('Entrada antecipada','<span class="lv pos">+'+mDisp(earlyM)+'</span>');
+
+  if(isSat){
+    clearInterval(lunchTimer);
+    document.getElementById('r-lunch-box').style.display='none';
+    if(exit){
+      var exitM=t2m(exit);
+      var worked=exitM-entryM;
+      var extra=worked-SAT_DUR;
+      rows+=row('Total trabalhado','<span class="lv">'+mDisp(worked)+'</span>');
+      rows+=row('<b>Extra hoje</b>','<span class="lv lv-main '+(extra>=0?'pos':'neg')+'">'+(extra>=0?'+':'')+mDisp(extra)+'</span>');
+      document.getElementById('r-breakdown').innerHTML=rows;
+      document.getElementById('r-live').style.display='block';
+      document.getElementById('r-tgt').style.display='none';
+      showImpact(extra);
+      document.getElementById('r-save').style.display='flex';
+    } else {
+      var tgtM=entryM+SAT_DUR+DAILY_TGT;
+      if(rows)document.getElementById('r-live').style.display='block';
+      document.getElementById('r-breakdown').innerHTML=rows;
+      showTgt(m2t(tgtM),'para fazer +'+DAILY_TGT+' min de extra');
+      document.getElementById('r-impact').style.display='none';
+      document.getElementById('r-save').style.display='none';
+    }
+    return;
+  }
+
+  // Regular day
+  if(lout){
+    var loutM=t2m(lout);
+    var morningM=loutM-entryM;
+    rows+=row('Manhã trabalhada','<span class="lv">'+mDisp(morningM)+'</span>');
+
+    if(!lin){
+      // On lunch - show return time
+      var returnM=loutM+STD_LUNCH;
+      document.getElementById('r-lunch-return').textContent=m2t(returnM);
+      document.getElementById('r-lunch-box').style.display='block';
+      clearInterval(lunchTimer);
+      startLunchCountdown('r-lunch-timer',returnM);
+      document.getElementById('r-breakdown').innerHTML=rows;
+      document.getElementById('r-live').style.display=rows?'block':'none';
+      document.getElementById('r-tgt').style.display='none';
+      document.getElementById('r-save').style.display='none';
+      document.getElementById('r-impact').style.display='none';
+      return;
+    } else {
+      document.getElementById('r-lunch-box').style.display='none';
+      clearInterval(lunchTimer);
+    }
+
+    var linM=t2m(lin);
+    var lunchTaken=linM-loutM;
+    var lunchDiff=STD_LUNCH-lunchTaken;
+    var lunchTxt;
+    if(Math.abs(lunchDiff)<2)lunchTxt='<span class="lv">'+mDisp(lunchTaken)+'</span>';
+    else if(lunchDiff>0)lunchTxt='<span class="lv pos">'+mDisp(lunchTaken)+' (voltou '+lunchDiff+'min antes)</span>';
+    else lunchTxt='<span class="lv neg">'+mDisp(lunchTaken)+' ('+Math.abs(lunchDiff)+'min a mais)</span>';
+    rows+=row('Intervalo almoço',lunchTxt);
+
+    if(exit){
+      var exitM2=t2m(exit);
+      var afternoonM=exitM2-linM;
+      rows+=row('Tarde trabalhada','<span class="lv">'+mDisp(afternoonM)+'</span>');
+      var totalM=morningM+afternoonM;
+      rows+=row('Total trabalhado','<span class="lv">'+mDisp(totalM)+'</span>');
+      var extra2=totalM-480;
+      rows+=row('<b>Extra hoje</b>','<span class="lv lv-main '+(extra2>=0?'pos':'neg')+'">'+(extra2>=0?'+':'')+mDisp(extra2)+'</span>');
+      document.getElementById('r-breakdown').innerHTML=rows;
+      document.getElementById('r-live').style.display='block';
+      document.getElementById('r-tgt').style.display='none';
+      showImpact(extra2);
+      document.getElementById('r-save').style.display='flex';
+    } else {
+      var extraSoFar=earlyM+Math.max(0,lunchDiff);
+      var stillNeed=Math.max(0,DAILY_TGT-extraSoFar);
+      var needAfternoon=(480-morningM)+stillNeed;
+      var tgtExit=linM+needAfternoon;
+      document.getElementById('r-breakdown').innerHTML=rows;
+      document.getElementById('r-live').style.display='block';
+      showTgt(m2t(tgtExit),stillNeed>0?'para fazer +'+DAILY_TGT+' min de extra':'✅ meta atingida! pode sair');
+      document.getElementById('r-impact').style.display='none';
+      document.getElementById('r-save').style.display='none';
+    }
+  } else {
+    document.getElementById('r-lunch-box').style.display='none';
+    clearInterval(lunchTimer);
+    document.getElementById('r-breakdown').innerHTML=rows;
+    document.getElementById('r-live').style.display=rows?'block':'none';
+    // Show target exit based on just early arrival
+    if(entryM<=STD_START){
+      var tgt2=STD_END+Math.max(0,DAILY_TGT-earlyM);
+      showTgt(m2t(tgt2),'para fazer +'+DAILY_TGT+' min de extra');
+    } else {
+      document.getElementById('r-tgt').style.display='none';
+    }
+    document.getElementById('r-save').style.display='none';
+    document.getElementById('r-impact').style.display='none';
+  }
+}
+
+function showTgt(time,sub){
+  document.getElementById('r-tgt').style.display='block';
+  document.getElementById('r-tgt-time').textContent=time;
+  document.getElementById('r-tgt-sub').textContent=sub;
+  document.getElementById('r-tgt-time').className='tgt-time'+(sub.indexOf('✅')>=0?' green-time':'');
+}
+
+function showImpact(extraMin){
+  var d=getData();
+  var prevTotal=d.total||0;
+  // Subtract today's existing entry if editing
+  var today=editingDate||todayStr();
+  var existing=(d.entries||[]).find(function(e){return e.date===today;});
+  if(existing)prevTotal-=existing.extra;
+  var newTotal=prevTotal+Math.round(extraMin);
+  var earned=(newTotal/60)*HE_NET;
+  document.getElementById('imp-today').textContent=(extraMin>=0?'+':'')+mDisp(extraMin);
+  document.getElementById('imp-total').textContent=mDisp(newTotal);
+  document.getElementById('imp-earned').textContent=curr(earned);
+  document.getElementById('imp-salary').textContent=curr(NET_BASE+earned);
+  document.getElementById('r-impact').style.display='block';
+}
+
+// ═══ LUNCH COUNTDOWN ═══
+function startLunchCountdown(timerId,returnM){
+  clearInterval(lunchTimer);
+  function update(){
+    var n=new Date();
+    var nowM=n.getHours()*60+n.getMinutes();
+    var diff=returnM-nowM;
+    var el=document.getElementById(timerId);
+    if(!el)return;
+    if(diff<=0){el.textContent='⏰ Hora de voltar!';el.style.color='#FF5252';}
+    else{el.textContent=pad(Math.floor(diff/60))+':'+pad(diff%60);el.style.color='#fff';}
+  }
+  update();
+  lunchTimer=setInterval(update,30000);
+}
+
+// ═══ SAVE ═══
+function saveDay(){
+  var entry=document.getElementById('i-entry').value;
+  var lout=document.getElementById('i-lout').value;
+  var lin=document.getElementById('i-lin').value;
+  var exit=document.getElementById('i-exit').value;
+  if(!entry||!exit){alert('Preencha ao menos entrada e saída!');return;}
+
+  var entryM=t2m(entry);
+  var exitM=t2m(exit);
+  var extra=0;
+  if(isSat){
+    extra=exitM-entryM-SAT_DUR;
+  } else if(lout&&lin){
+    extra=(t2m(lout)-entryM)+(exitM-t2m(lin))-480;
+  } else {
+    extra=exitM-entryM-480;
+  }
+
+  var d=getData();
+  var saveDate=editingDate||todayStr();
+  d.entries=(d.entries||[]).filter(function(e){return e.date!==saveDate;});
+  d.entries.push({date:saveDate,entry:entry,lout:lout,lin:lin,exit:exit,extra:Math.round(extra),sat:isSat});
+  d.total=d.entries.reduce(function(s,e){return s+e.extra;},0);
+  setData(d);
+  clearWIP();
+  navTo('s-dash');
+}
+
+// ═══ HISTORY ═══
+function renderHistory(){
+  var d=getData();
+  var entries=d.entries||[];
+  document.getElementById('h-sub').textContent=mname();
+  var hl=document.getElementById('h-list');
+  var hs=document.getElementById('h-sum');
+  if(!entries.length){
+    hl.innerHTML='<div class="empty"><div class="ei">📭</div><p>Nenhum dia registrado ainda</p></div>';
+    hs.style.display='none';return;
+  }
+  var sorted=entries.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+  var html='';
+  for(var i=0;i<sorted.length;i++){
+    var e=sorted[i];
+    var earn=(e.extra/60)*HE_NET;
+    var sub=(e.lout&&e.lin)?e.entry+'→'+e.lout+' / '+e.lin+'→'+(e.exit||'?'):e.entry+(e.sat?' · Sáb':'');
+    var color=e.extra>=0?'var(--green)':'var(--red)';
+    html+='<div class="hitem" onclick="editEntry(\''+e.date+'\')">'+
+      '<div><div class="hdate">'+fmtShort(e.date)+'</div><div class="hsub">'+sub+'</div></div>'+
+      '<div style="text-align:right"><div class="hextra" style="color:'+color+'">'+(e.extra>=0?'+':'')+mDisp(e.extra)+'</div>'+
+      '<div class="hearn">'+curr(earn)+'</div></div></div>';
+  }
+  hl.innerHTML=html+'<p class="edit-hint">✏️ Toque para editar</p>';
+  var total=d.total||0;
+  var earned=(total/60)*HE_NET;
+  var rem=Math.max(0,TGT_MIN-total);
+  document.getElementById('h-total').textContent=mDisp(total);
+  document.getElementById('h-earned').textContent=curr(earned);
+  document.getElementById('h-salary').textContent=curr(NET_BASE+earned);
+  document.getElementById('h-days').textContent=entries.length+' dias';
+  document.getElementById('h-remaining').textContent=rem>0?mDisp(rem)+' ('+curr(rem/60*HE_NET)+')':'✅ Meta atingida!';
   hs.style.display='block';
 }
 
+function editEntry(date){
+  var d=getData();
+  var e=(d.entries||[]).find(function(x){return x.date===date;});
+  if(!e)return;
+  // Reset register screen then fill
+  initRegister();
+  fillForEdit(e);
+  navTo('s-register');
+}
+
+// ═══ CALCULATOR ═══
+function initCalc(){
+  document.getElementById('c-lout').value='';
+  document.getElementById('c-lunch-res').style.display='none';
+  document.getElementById('c-scenario-res').style.display='none';
+  document.getElementById('c-earn-res').style.display='none';
+}
+
+function calcLunchReturn(){
+  var lout=document.getElementById('c-lout').value;
+  var el=document.getElementById('c-lunch-res');
+  if(!lout){el.style.display='none';return;}
+  var loutM=t2m(lout);
+  var returnM=loutM+STD_LUNCH;
+  el.style.display='block';
+  el.innerHTML='Saiu às <b>'+lout+'</b> → volte às <b>'+m2t(returnM)+'</b><br><span style="font-size:12px;color:var(--muted)">Intervalo padrão: 2 horas</span>';
+}
+
+function calcScenario(){
+  var entry=document.getElementById('c-entry').value;
+  var slout=document.getElementById('c-slout').value;
+  var slin=document.getElementById('c-slin').value;
+  var exit=document.getElementById('c-exit').value;
+  var el=document.getElementById('c-scenario-res');
+  if(!entry||!exit){el.style.display='none';return;}
+  var entryM=t2m(entry),exitM=t2m(exit);
+  var extra=0;
+  if(slout&&slin){
+    extra=(t2m(slout)-entryM)+(exitM-t2m(slin))-480;
+  } else {
+    extra=exitM-entryM-480;
+  }
+  var earn=(extra/60)*HE_NET;
+  el.style.display='block';
+  el.innerHTML='Extra: <b style="color:'+(extra>=0?'var(--green)':'var(--red)')+'">'+
+    (extra>=0?'+':'')+mDisp(extra)+'</b><br>'+
+    'Valor líquido: <b>'+(extra>=0?curr(earn):'R$ 0,00')+'</b>';
+}
+
+function calcEarnings(){
+  var h=document.getElementById('c-hours').value;
+  var el=document.getElementById('c-earn-res');
+  if(!h){el.style.display='none';return;}
+  var m=t2m(h);
+  if(m===null||m<=0){el.style.display='none';return;}
+  var gross=(m/60)*HE_GROSS;
+  var net=(m/60)*HE_NET;
+  el.style.display='block';
+  el.innerHTML=mDisp(m)+' de extra<br>Bruto: <b>'+curr(gross)+'</b> · Líquido: <b style="color:var(--green)">'+curr(net)+'</b><br>'+
+    '<span style="font-size:12px;color:var(--muted)">Falta para R$100: '+mDisp(Math.max(0,TGT_MIN-m))+'</span>';
+}
+
+// ═══ AI SCREENSHOT ═══
+function triggerPhoto(){document.getElementById('img-file').click();}
+
+function handlePhoto(event){
+  var file=event.target.files[0];
+  event.target.value='';
+  if(!file)return;
+  var apiKey=getKey();
+  if(!apiKey){showAiMsg('err','Configure a chave API em ⚙️ primeiro.');return;}
+  document.getElementById('ai-loading').style.display='block';
+  document.getElementById('ai-alert').style.display='none';
+  var reader=new FileReader();
+  reader.onload=function(e){callAPI(apiKey,e.target.result.split(',')[1],file.type||'image/jpeg');};
+  reader.onerror=function(){showAiMsg('err','Erro ao ler imagem.');document.getElementById('ai-loading').style.display='none';};
+  reader.readAsDataURL(file);
+}
+
+function callAPI(apiKey,b64,mime){
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({
+      model:'claude-haiku-4-5-20251001',max_tokens:150,
+      messages:[{role:'user',content:[
+        {type:'image',source:{type:'base64',media_type:mime,data:b64}},
+        {type:'text',text:'Brazilian time punch app screenshot. Extract times. Return ONLY JSON: {"entry":"HH:MM","lunchOut":"HH:MM","lunchIn":"HH:MM","exit":"HH:MM"}. Use null for missing. entry=first Entrada, lunchOut=first Saída (lunch), lunchIn=second Entrada, exit=last Saída.'}
+      ]}]
+    })
+  })
+  .then(function(r){
+    if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'Erro '+r.status);});
+    return r.json();
+  })
+  .then(function(data){
+    var text='';
+    var c=data.content||[];
+    for(var i=0;i<c.length;i++){if(c[i].type==='text'){text=c[i].text;break;}}
+    var json=JSON.parse(text.replace(/```[a-z]*/g,'').replace(/```/g,'').trim());
+    if(json.entry)document.getElementById('i-entry').value=json.entry;
+    if(json.lunchOut)document.getElementById('i-lout').value=json.lunchOut;
+    if(json.lunchIn)document.getElementById('i-lin').value=json.lunchIn;
+    if(json.exit)document.getElementById('i-exit').value=json.exit;
+    markAllFilled();
+    recalc();
+    showAiMsg('ok','✅ Horários preenchidos! Confira e salve.');
+  })
+  .catch(function(err){showAiMsg('err','Erro: '+err.message);})
+  .finally(function(){document.getElementById('ai-loading').style.display='none';});
+}
+
+function showAiMsg(type,msg){
+  var el=document.getElementById('ai-alert');
+  el.style.display='block';
+  el.className='alert '+type;
+  el.textContent=msg;
+}
+
+// ═══ SETTINGS ═══
+function renderSettings(){
+  var k=getKey();
+  document.getElementById('key-input').value=k;
+  updateKeyStatus(k);
+}
+function updateKeyStatus(k){
+  document.getElementById('key-status').innerHTML=k&&k.length>10?
+    '<span class="api-badge ok">✓ Chave configurada — screenshot IA ativo</span>':
+    '<span class="api-badge no">✗ Sem chave — use entrada manual</span>';
+}
+function saveKey(){
+  var k=document.getElementById('key-input').value.trim();
+  if(!k){alert('Cole sua chave API!');return;}
+  localStorage.setItem('akey',k);
+  updateKeyStatus(k);
+  alert('Chave salva! ✅');
+}
+function clearKey(){
+  if(confirm('Remover chave?')){
+    localStorage.removeItem('akey');
+    document.getElementById('key-input').value='';
+    updateKeyStatus('');
+  }
+}
+
 // ═══ RESET ═══
-function confirmReset() {
-  if(confirm('Iniciar novo mês? Os dados do mês atual serão apagados.')) {
-    localStorage.removeItem(monthKey());
-    renderDash();
+function confirmReset(){
+  if(confirm('Iniciar novo mês? Os dados atuais serão apagados.')){
+    localStorage.removeItem(mkey());
+    clearWIP();
+    if(document.getElementById('s-dash').classList.contains('active'))renderDash();
+    if(document.getElementById('s-settings').classList.contains('active')){}
+    navTo('s-dash');
   }
 }
 
