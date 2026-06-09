@@ -167,11 +167,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
 .set-row:last-child{border:none}
 .set-lbl{font-size:15px;font-weight:600}
 .set-val{font-weight:700}
-.key-input{width:100%;padding:13px;border:2px solid var(--border);border-radius:12px;font-size:13px;font-family:monospace;outline:none;background:#FAFAFA;margin-bottom:10px}
-.key-input:focus{border-color:var(--red)}
-.api-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px}
-.api-badge.ok{background:#E8F5E9;color:var(--green2)}
-.api-badge.no{background:#FFEBEE;color:var(--red2)}
+
 
 /* ALERTS */
 .alert{padding:13px 16px;border-radius:13px;font-size:13px;font-weight:500;margin-bottom:12px;line-height:1.4}
@@ -222,7 +218,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
     <!-- Success -->
     <div class="success-banner" id="d-success" style="display:none">
       <div class="se">🎉</div><h2>Meta Atingida!</h2>
-      <p>R$ 100,00 de extras garantidos!</p>
+      <p id="d-success-val">extras garantidos!</p>
     </div>
 
     <!-- TODAY LIVE STATUS (shown if day started but not finished) -->
@@ -250,7 +246,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
       <div class="clabel">Extras Acumuladas</div>
       <div class="big red" id="d-accum">0 min</div>
       <div class="prog-wrap">
-        <div class="prog-meta"><span>Meta: 7h 42min</span><b id="d-pct">0%</b></div>
+        <div class="prog-meta"><span id="d-tgt-lbl">Meta: --</span><b id="d-pct">0%</b></div>
         <div class="prog-track"><div class="prog-bar" id="d-bar" style="width:0%"></div></div>
       </div>
     </div>
@@ -260,7 +256,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
       <div class="card">
         <div class="clabel">Ganho Extra</div>
         <div class="big green" id="d-earned">R$ 0</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px">meta: R$ 100</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px" id="d-meta-val">meta: R$ 100</div>
       </div>
       <div class="card">
         <div class="clabel">Salário Total</div>
@@ -275,7 +271,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
           <div style="font-size:22px;font-weight:800" id="d-dmin">18 min/dia</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:3px">07:50 entrada · 18:08 saída</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px" id="d-entry-exit">-- entrada · -- saída</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:18px;font-weight:800" id="d-days-left">-- dias</div>
@@ -303,15 +299,6 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
     <div class="sub" id="r-date"></div>
   </div>
   <div class="content">
-
-    <!-- AI -->
-    <div id="r-ai-wrap" style="display:none">
-      <button class="btn btn-purple" onclick="triggerPhoto()">📷 Ler Screenshot Automático</button>
-      <input type="file" id="img-file" accept="image/*" style="display:none" onchange="handlePhoto(event)">
-      <div id="ai-loading" style="display:none"><div class="loading-box"><div class="spinner"></div><p>Analisando com IA...</p></div></div>
-      <div id="ai-alert" style="display:none"></div>
-      <p style="text-align:center;font-size:12px;color:var(--muted);margin:-4px 0 12px">ou preencha os campos abaixo manualmente</p>
-    </div>
 
     <!-- Atraso warning -->
     <div id="r-atraso" style="display:none">
@@ -413,7 +400,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
       <div class="srow"><span class="sl">Ganho extra</span><span class="sv pos" id="h-earned"></span></div>
       <div class="srow"><span class="sl">Salário estimado</span><span class="sv" id="h-salary"></span></div>
       <div class="srow"><span class="sl">Dias registrados</span><span class="sv" id="h-days"></span></div>
-      <div class="srow"><span class="sl">Falta para R$ 100</span><span class="sv" id="h-remaining"></span></div>
+      <div class="srow"><span class="sl" id="h-remaining-lbl">Falta para meta</span><span class="sv" id="h-remaining"></span></div>
     </div>
   </div>
 </div>
@@ -493,26 +480,44 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
   </div>
   <div class="content">
     <div class="card">
-      <div class="clabel">Chave API (para leitura de screenshot)</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Obtenha em <b>console.anthropic.com</b> → API Keys → Create Key. Fica salvo só no seu celular.</p>
-      <input type="password" class="key-input" id="key-input" placeholder="sk-ant-api03-...">
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-green" style="margin:0;flex:1;padding:13px;font-size:14px" onclick="saveKey()">💾 Salvar</button>
-        <button class="btn btn-white" style="margin:0;flex:1;padding:13px;font-size:14px;color:var(--red)" onclick="clearKey()">🗑 Remover</button>
+      <div class="clabel">⚙️ Metas e Horários</div>
+
+      <div class="set-row">
+        <div>
+          <div class="set-lbl">Meta do Mês</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px" id="meta-hint">--</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:15px;font-weight:700;color:var(--muted)">R$</span>
+          <input type="number" id="meta-input" min="1" max="9999"
+            style="width:80px;padding:8px 6px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;text-align:center;outline:none;-webkit-appearance:none"
+            oninput="updateMetaHint()">
+          <button onclick="saveMeta(event)"
+            style="background:var(--green);color:#fff;border:none;border-radius:10px;padding:10px 13px;font-size:14px;font-weight:700;cursor:pointer">✓</button>
+        </div>
       </div>
-      <div style="margin-top:10px" id="key-status"></div>
+
+      <div class="set-row">
+        <div>
+          <div class="set-lbl">Entrada padrão</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px" id="entry-hint">--</div>
+        </div>
+        <input type="time" id="entry-time-input"
+          style="padding:9px 10px;border:2px solid var(--border);border-radius:10px;font-size:18px;font-weight:700;outline:none;"
+          onchange="saveEntryTime()">
+      </div>
     </div>
 
     <div class="card">
       <div class="clabel">Contrato — Jupiter TI</div>
-      <div class="set-row"><span class="set-lbl">Salário Base</span><span class="set-val">R$ 2.093,29</span></div>
-      <div class="set-row"><span class="set-lbl">Periculosidade (30%)</span><span class="set-val">R$ 627,99</span></div>
-      <div class="set-row"><span class="set-lbl">Bruto Total</span><span class="set-val">R$ 2.721,28</span></div>
-      <div class="set-row"><span class="set-lbl">INSS</span><span class="set-val">R$ 220,61</span></div>
+      <div class="set-row"><span class="set-lbl">Salário Base</span><span class="set-val">R$ 2.093,26</span></div>
+      <div class="set-row"><span class="set-lbl">Periculosidade (30%)</span><span class="set-val">R$ 627,98</span></div>
+      <div class="set-row"><span class="set-lbl">Bruto Total</span><span class="set-val">R$ 2.721,24</span></div>
+      <div class="set-row"><span class="set-lbl">INSS (8,15%)</span><span class="set-val">R$ 234,56</span></div>
       <div class="set-row"><span class="set-lbl">IRRF</span><span class="set-val" style="color:var(--green)">R$ 0 (isento)</span></div>
-      <div class="set-row"><span class="set-lbl">Líquido Base</span><span class="set-val">R$ 2.500,67</span></div>
-      <div class="set-row"><span class="set-lbl">Hora Extra (líquido)</span><span class="set-val">R$ 12,99/h</span></div>
-      <div class="set-row"><span class="set-lbl">Meta Extras</span><span class="set-val">7h42min = R$ 100</span></div>
+      <div class="set-row"><span class="set-lbl">Líquido Base</span><span class="set-val">R$ 2.499,46</span></div>
+      <div class="set-row"><span class="set-lbl">Hora Extra (bruto)</span><span class="set-val">R$ 18,55/h</span></div>
+      <div class="set-row"><span class="set-lbl">Hora Extra (líquido)</span><span class="set-val">R$ 17,04/h</span></div>
     </div>
 
     <div class="card">
@@ -527,12 +532,14 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
 </div>
 
 <script>
-// ═══ CONSTANTS ═══
-var NET_BASE  = 2500.67;
-var HE_GROSS  = (2093.29/220)*1.5;   // ~14.27/h
-var HE_NET    = HE_GROSS*0.91;        // ~12.99/h
-var TGT_MIN   = Math.ceil(100/HE_NET*60); // 462 min = 7h42min
-var DAILY_TGT = 18;
+// ═══ CONSTANTS (holerite correto — Jupiter TI) ═══
+var SALARY_BASE      = 2093.26;
+var PERICULOSIDADE_V = 627.98;
+var MONTHLY_HOURS    = 220;
+var INSS_RATE        = 0.0815;
+var HE_GROSS = (SALARY_BASE + PERICULOSIDADE_V) / MONTHLY_HOURS * 1.5; // R$18,55/h bruto
+var HE_NET   = HE_GROSS * (1 - INSS_RATE);                              // ~R$17,04/h líquido
+var NET_BASE = (SALARY_BASE + PERICULOSIDADE_V) * (1 - INSS_RATE);      // ~R$2.499,46
 var STD_START = 480;   // 08:00
 var STD_END   = 1080;  // 18:00
 var STD_LUNCH = 120;   // 2h
@@ -548,7 +555,18 @@ var editingDate = null;
 function mkey(){var n=new Date();return 'ponto_'+n.getFullYear()+'_'+(n.getMonth()+1);}
 function getData(){try{return JSON.parse(localStorage.getItem(mkey()))||{entries:[],total:0};}catch(e){return{entries:[],total:0};}}
 function setData(d){localStorage.setItem(mkey(),JSON.stringify(d));}
-function getKey(){return localStorage.getItem('akey')||'';}
+
+// Meta e configurações (dinâmicas)
+function getMeta(){return parseFloat(localStorage.getItem('meta_rs'))||100;}
+function getStdEntry(){return localStorage.getItem('std_entry')||'07:50';}
+function getStdEntryM(){return t2m(getStdEntry());}
+function getTgtMin(){return Math.ceil(getMeta()/HE_NET*60);}
+function getDailyTgt(){
+  var total=(getData().total)||0;
+  var rem=Math.max(0,getTgtMin()-total);
+  var dl=daysLeft();
+  return dl>0?Math.ceil(rem/dl):Math.ceil(getTgtMin()/22);
+}
 
 // ═══ HELPERS ═══
 function t2m(s){if(!s||s==='')return null;var p=s.split(':');if(p.length<2)return null;return parseInt(p[0],10)*60+parseInt(p[1],10);}
@@ -595,7 +613,9 @@ function renderDash(){
   var d=getData();
   var total=d.total||0;
   var earned=(total/60)*HE_NET;
-  var pct=Math.min(100,Math.round(total/TGT_MIN*100));
+  var tgtMin=getTgtMin();
+  var dailyTgt=getDailyTgt();
+  var pct=Math.min(100,Math.round(total/tgtMin*100));
   var dl=daysLeft();
   var mn=mname();
 
@@ -606,14 +626,27 @@ function renderDash(){
   var bar=document.getElementById('d-bar');
   bar.style.width=pct+'%';
   bar.className='prog-bar'+(pct>=100?' done':'');
-  document.getElementById('d-earned').textContent=curr(earned);
-  document.getElementById('d-total').textContent=curr(NET_BASE+earned);
-  document.getElementById('d-success').style.display=total>=TGT_MIN?'block':'none';
 
-  var rem=Math.max(0,TGT_MIN-total);
-  var perDay=dl>0?Math.ceil(rem/dl):DAILY_TGT;
+  // Labels dinâmicos
+  document.getElementById('d-tgt-lbl').textContent='Meta: '+mDisp(tgtMin);
+  document.getElementById('d-earned').textContent=curr(earned);
+  document.getElementById('d-meta-val').textContent='meta: R$ '+getMeta().toFixed(0);
+  document.getElementById('d-total').textContent=curr(NET_BASE+earned);
+
+  // Success banner
+  document.getElementById('d-success').style.display=total>=tgtMin?'block':'none';
+  document.getElementById('d-success-val').textContent='R$ '+getMeta().toFixed(2).replace('.',',')+ ' de extras garantidos!';
+
+  var rem=Math.max(0,tgtMin-total);
+  var perDay=dl>0?Math.ceil(rem/dl):dailyTgt;
   document.getElementById('d-dmin').textContent=perDay+' min/dia';
   document.getElementById('d-days-left').textContent=dl+' dias';
+
+  // Horário entrada/saída padrão dinâmico
+  var stdEntryM=getStdEntryM();
+  var earlyStd=Math.max(0,STD_START-stdEntryM);
+  var stillNeedStd=Math.max(0,perDay-earlyStd);
+  document.getElementById('d-entry-exit').textContent=getStdEntry()+' entrada · '+m2t(STD_END+stillNeedStd)+' saída';
 
   // Today's entry
   var today=todayStr();
@@ -623,7 +656,6 @@ function renderDash(){
   var lunchDiv=document.getElementById('d-lunch-live');
 
   if(te){
-    // Full day registered
     tc.style.display='block';
     liveDiv.style.display='none';
     lunchDiv.style.display='none';
@@ -635,26 +667,23 @@ function renderDash(){
       '<div class="trow"><span class="tl">Extra</span><span class="'+(ex>=0?'tp':'tn')+'">'+(ex>=0?'+':'')+mDisp(ex)+'</span></div>';
   } else {
     tc.style.display='none';
-    // Check localStorage for in-progress day
     var wip=getWIP();
     if(wip && wip.entry){
       var entryM=t2m(wip.entry);
       if(wip.lout && !wip.lin){
-        // On lunch
         liveDiv.style.display='none';
         lunchDiv.style.display='block';
         var returnM=t2m(wip.lout)+STD_LUNCH;
         document.getElementById('d-lunch-return').textContent=m2t(returnM);
         startLunchCountdown('d-lunch-timer',returnM);
       } else if(wip.entry && !wip.exit){
-        // At work, calculate target exit
         lunchDiv.style.display='none';
         liveDiv.style.display='block';
         var earlyM=Math.max(0,STD_START-entryM);
         var lunchDiff=0;
         if(wip.lout&&wip.lin) lunchDiff=STD_LUNCH-(t2m(wip.lin)-t2m(wip.lout));
         var extraSoFar=earlyM+Math.max(0,lunchDiff);
-        var stillNeed=Math.max(0,DAILY_TGT-extraSoFar);
+        var stillNeed=Math.max(0,dailyTgt-extraSoFar);
         var linM=wip.lin?t2m(wip.lin):null;
         var tgtExit;
         if(linM){
@@ -664,7 +693,7 @@ function renderDash(){
           tgtExit=STD_END+stillNeed;
         }
         document.getElementById('d-live-exit').textContent=m2t(tgtExit);
-        document.getElementById('d-live-sub').textContent=stillNeed>0?'para fazer +'+DAILY_TGT+' min de extra':'✅ meta atingida!';
+        document.getElementById('d-live-sub').textContent=stillNeed>0?'para fazer +'+dailyTgt+' min de extra':'✅ meta atingida!';
         var mini='<span class="ts-chip">Entrou '+wip.entry+'</span>';
         if(wip.lout) mini+='<span class="ts-chip">Almoço '+wip.lout+'</span>';
         if(wip.lin) mini+='<span class="ts-chip">Voltou '+wip.lin+'</span>';
@@ -690,9 +719,6 @@ function initRegister(){
   editingDate=null;
   document.getElementById('r-title').textContent='Registrar Hoje';
   document.getElementById('r-date').textContent=fmtFull();
-  document.getElementById('r-ai-wrap').style.display=getKey()?'block':'none';
-  document.getElementById('ai-loading').style.display='none';
-  document.getElementById('ai-alert').style.display='none';
   document.getElementById('r-live').style.display='none';
   document.getElementById('r-tgt').style.display='none';
   document.getElementById('r-save').style.display='none';
@@ -728,7 +754,6 @@ function fillForEdit(entry){
   editingDate=entry.date;
   document.getElementById('r-title').textContent='Editar '+fmtShort(entry.date);
   document.getElementById('r-date').textContent=fmtShort(entry.date);
-  document.getElementById('r-ai-wrap').style.display='none';
   document.getElementById('r-atraso').style.display='none';
   isSat=entry.sat||false;
   document.getElementById('t-sat').classList.toggle('on',isSat);
@@ -795,7 +820,7 @@ function recalc(){
   if(atrasM>0 && !isSat){
     document.getElementById('r-atraso').style.display='flex';
     document.getElementById('r-atraso-val').textContent=mDisp(atrasM);
-    document.getElementById('r-atraso-sub').textContent='Será descontado: '+curr((atrasM/60)*(2093.29/220));
+    document.getElementById('r-atraso-sub').textContent='Será descontado: '+curr((atrasM/60)*((SALARY_BASE+PERICULOSIDADE_V)/MONTHLY_HOURS));
     document.getElementById('i-entry').classList.add('late');
   } else {
     document.getElementById('r-atraso').style.display='none';
@@ -821,10 +846,10 @@ function recalc(){
       showImpact(extra);
       document.getElementById('r-save').style.display='flex';
     } else {
-      var tgtM=entryM+SAT_DUR+DAILY_TGT;
+      var _dtSat=getDailyTgt();var tgtM=entryM+SAT_DUR+_dtSat;
       if(rows)document.getElementById('r-live').style.display='block';
       document.getElementById('r-breakdown').innerHTML=rows;
-      showTgt(m2t(tgtM),'para fazer +'+DAILY_TGT+' min de extra');
+      showTgt(m2t(tgtM),'para fazer +'+_dtSat+' min de extra');
       document.getElementById('r-impact').style.display='none';
       document.getElementById('r-save').style.display='none';
     }
@@ -878,13 +903,13 @@ function recalc(){
       showImpact(extra2);
       document.getElementById('r-save').style.display='flex';
     } else {
-      var extraSoFar=earlyM+Math.max(0,lunchDiff);
-      var stillNeed=Math.max(0,DAILY_TGT-extraSoFar);
+      var _dt2=getDailyTgt();var extraSoFar=earlyM+Math.max(0,lunchDiff);
+      var stillNeed=Math.max(0,_dt2-extraSoFar);
       var needAfternoon=(480-morningM)+stillNeed;
       var tgtExit=linM+needAfternoon;
       document.getElementById('r-breakdown').innerHTML=rows;
       document.getElementById('r-live').style.display='block';
-      showTgt(m2t(tgtExit),stillNeed>0?'para fazer +'+DAILY_TGT+' min de extra':'✅ meta atingida! pode sair');
+      showTgt(m2t(tgtExit),stillNeed>0?'para fazer +'+_dt2+' min de extra':'✅ meta atingida! pode sair');
       document.getElementById('r-impact').style.display='none';
       document.getElementById('r-save').style.display='none';
     }
@@ -895,8 +920,8 @@ function recalc(){
     document.getElementById('r-live').style.display=rows?'block':'none';
     // Show target exit based on just early arrival
     if(entryM<=STD_START){
-      var tgt2=STD_END+Math.max(0,DAILY_TGT-earlyM);
-      showTgt(m2t(tgt2),'para fazer +'+DAILY_TGT+' min de extra');
+      var _dt3=getDailyTgt();var tgt2=STD_END+Math.max(0,_dt3-earlyM);
+      showTgt(m2t(tgt2),'para fazer +'+_dt3+' min de extra');
     } else {
       document.getElementById('r-tgt').style.display='none';
     }
@@ -999,11 +1024,12 @@ function renderHistory(){
   hl.innerHTML=html+'<p class="edit-hint">✏️ Toque para editar</p>';
   var total=d.total||0;
   var earned=(total/60)*HE_NET;
-  var rem=Math.max(0,TGT_MIN-total);
+  var rem=Math.max(0,getTgtMin()-total);
   document.getElementById('h-total').textContent=mDisp(total);
   document.getElementById('h-earned').textContent=curr(earned);
   document.getElementById('h-salary').textContent=curr(NET_BASE+earned);
   document.getElementById('h-days').textContent=entries.length+' dias';
+  document.getElementById('h-remaining-lbl').textContent='Falta para R$'+getMeta().toFixed(0);
   document.getElementById('h-remaining').textContent=rem>0?mDisp(rem)+' ('+curr(rem/60*HE_NET)+')':'✅ Meta atingida!';
   hs.style.display='block';
 }
@@ -1067,90 +1093,47 @@ function calcEarnings(){
   var net=(m/60)*HE_NET;
   el.style.display='block';
   el.innerHTML=mDisp(m)+' de extra<br>Bruto: <b>'+curr(gross)+'</b> · Líquido: <b style="color:var(--green)">'+curr(net)+'</b><br>'+
-    '<span style="font-size:12px;color:var(--muted)">Falta para R$100: '+mDisp(Math.max(0,TGT_MIN-m))+'</span>';
-}
-
-// ═══ AI SCREENSHOT ═══
-function triggerPhoto(){document.getElementById('img-file').click();}
-
-function handlePhoto(event){
-  var file=event.target.files[0];
-  event.target.value='';
-  if(!file)return;
-  var apiKey=getKey();
-  if(!apiKey){showAiMsg('err','Configure a chave API em ⚙️ primeiro.');return;}
-  document.getElementById('ai-loading').style.display='block';
-  document.getElementById('ai-alert').style.display='none';
-  var reader=new FileReader();
-  reader.onload=function(e){callAPI(apiKey,e.target.result.split(',')[1],file.type||'image/jpeg');};
-  reader.onerror=function(){showAiMsg('err','Erro ao ler imagem.');document.getElementById('ai-loading').style.display='none';};
-  reader.readAsDataURL(file);
-}
-
-function callAPI(apiKey,b64,mime){
-  fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({
-      model:'claude-haiku-4-5-20251001',max_tokens:150,
-      messages:[{role:'user',content:[
-        {type:'image',source:{type:'base64',media_type:mime,data:b64}},
-        {type:'text',text:'Brazilian time punch app screenshot. Extract times. Return ONLY JSON: {"entry":"HH:MM","lunchOut":"HH:MM","lunchIn":"HH:MM","exit":"HH:MM"}. Use null for missing. entry=first Entrada, lunchOut=first Saída (lunch), lunchIn=second Entrada, exit=last Saída.'}
-      ]}]
-    })
-  })
-  .then(function(r){
-    if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'Erro '+r.status);});
-    return r.json();
-  })
-  .then(function(data){
-    var text='';
-    var c=data.content||[];
-    for(var i=0;i<c.length;i++){if(c[i].type==='text'){text=c[i].text;break;}}
-    var json=JSON.parse(text.replace(/```[a-z]*/g,'').replace(/```/g,'').trim());
-    if(json.entry)document.getElementById('i-entry').value=json.entry;
-    if(json.lunchOut)document.getElementById('i-lout').value=json.lunchOut;
-    if(json.lunchIn)document.getElementById('i-lin').value=json.lunchIn;
-    if(json.exit)document.getElementById('i-exit').value=json.exit;
-    markAllFilled();
-    recalc();
-    showAiMsg('ok','✅ Horários preenchidos! Confira e salve.');
-  })
-  .catch(function(err){showAiMsg('err','Erro: '+err.message);})
-  .finally(function(){document.getElementById('ai-loading').style.display='none';});
-}
-
-function showAiMsg(type,msg){
-  var el=document.getElementById('ai-alert');
-  el.style.display='block';
-  el.className='alert '+type;
-  el.textContent=msg;
+    '<span style="font-size:12px;color:var(--muted)">Falta para meta (R$'+getMeta().toFixed(0)+'): '+mDisp(Math.max(0,getTgtMin()-m))+'</span>';
 }
 
 // ═══ SETTINGS ═══
 function renderSettings(){
-  var k=getKey();
-  document.getElementById('key-input').value=k;
-  updateKeyStatus(k);
+  document.getElementById('meta-input').value=getMeta();
+  document.getElementById('entry-time-input').value=getStdEntry();
+  updateMetaHint();
+  updateEntryHint();
 }
-function updateKeyStatus(k){
-  document.getElementById('key-status').innerHTML=k&&k.length>10?
-    '<span class="api-badge ok">✓ Chave configurada — screenshot IA ativo</span>':
-    '<span class="api-badge no">✗ Sem chave — use entrada manual</span>';
+function updateMetaHint(){
+  var v=parseFloat(document.getElementById('meta-input').value)||getMeta();
+  var mins=Math.ceil(v/HE_NET*60);
+  var el=document.getElementById('meta-hint');
+  if(el)el.textContent=mDisp(mins)+' de extra no mês';
 }
-function saveKey(){
-  var k=document.getElementById('key-input').value.trim();
-  if(!k){alert('Cole sua chave API!');return;}
-  localStorage.setItem('akey',k);
-  updateKeyStatus(k);
-  alert('Chave salva! ✅');
+function saveMeta(e){
+  var v=parseFloat(document.getElementById('meta-input').value)||100;
+  if(v<1)v=1;
+  localStorage.setItem('meta_rs',v);
+  updateMetaHint();
+  updateEntryHint();
+  renderDash();
+  var btn=e?e.target:null;
+  if(btn){var old=btn.textContent;btn.textContent='✅';setTimeout(function(){btn.textContent=old;},1500);}
 }
-function clearKey(){
-  if(confirm('Remover chave?')){
-    localStorage.removeItem('akey');
-    document.getElementById('key-input').value='';
-    updateKeyStatus('');
-  }
+function updateEntryHint(){
+  var et=(document.getElementById('entry-time-input')||{}).value||getStdEntry();
+  var dailyTgt=getDailyTgt();
+  var entryM=t2m(et);
+  var earlyM=Math.max(0,STD_START-entryM);
+  var stillNeed=Math.max(0,dailyTgt-earlyM);
+  var exitM=STD_END+stillNeed;
+  var el=document.getElementById('entry-hint');
+  if(el)el.textContent='→ saia às '+m2t(exitM)+' para +'+dailyTgt+' min';
+}
+function saveEntryTime(){
+  var v=document.getElementById('entry-time-input').value||'07:50';
+  localStorage.setItem('std_entry',v);
+  updateEntryHint();
+  renderDash();
 }
 
 // ═══ RESET ═══
