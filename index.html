@@ -414,8 +414,8 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
     <div class="hdr-row" style="align-items:center;margin-top:0">
       <h1 id="cal-title">Calendário</h1>
       <div class="hdr-btns">
-        <button class="icon-btn" onclick="calPrev()">◀</button>
-        <button class="icon-btn" onclick="calNext()">▶</button>
+        <button class="icon-btn" onclick="calPrev()">◀️</button>
+        <button class="icon-btn" onclick="calNext()">▶️</button>
       </div>
     </div>
     <div class="sub" id="cal-sub"></div>
@@ -717,21 +717,18 @@ function renderDash(){
       } else if(wip.entry && !wip.exit){
         lunchDiv.style.display='none';
         liveDiv.style.display='block';
-        var earlyM=Math.max(0,STD_START-entryM);
-        var lunchDiff=0;
-        if(wip.lout&&wip.lin) lunchDiff=STD_LUNCH-(t2m(wip.lin)-t2m(wip.lout));
-        var extraSoFar=earlyM+Math.max(0,lunchDiff);
-        var stillNeed=Math.max(0,dailyTgt-extraSoFar);
+        // ── CORREÇÃO: calcula saída alvo direto da manhã trabalhada ──
         var linM=wip.lin?t2m(wip.lin):null;
         var tgtExit;
         if(linM){
           var morningM=t2m(wip.lout)-entryM;
-          tgtExit=linM+(480-morningM)+stillNeed;
+          tgtExit=linM+(480-morningM)+dailyTgt;
         } else {
-          tgtExit=STD_END+stillNeed;
+          var earlyM=Math.max(0,STD_START-entryM);
+          tgtExit=STD_END+Math.max(0,dailyTgt-earlyM);
         }
         document.getElementById('d-live-exit').textContent=m2t(tgtExit);
-        document.getElementById('d-live-sub').textContent=stillNeed>0?'para fazer +'+dailyTgt+' min de extra':'✅ meta atingida!';
+        document.getElementById('d-live-sub').textContent='para fazer +'+dailyTgt+' min de extra';
         var mini='<span class="ts-chip">Entrou '+wip.entry+'</span>';
         if(wip.lout) mini+='<span class="ts-chip">Almoço '+wip.lout+'</span>';
         if(wip.lin) mini+='<span class="ts-chip">Voltou '+wip.lin+'</span>';
@@ -944,13 +941,13 @@ function recalc(){
       showImpact(extra2);
       document.getElementById('r-save').style.display='flex';
     } else {
-      var _dt2=getDailyTgt();var extraSoFar=earlyM+Math.max(0,lunchDiff);
-      var stillNeed=Math.max(0,_dt2-extraSoFar);
-      var needAfternoon=(480-morningM)+stillNeed;
+      // ── CORREÇÃO: usa morningM diretamente, sem descontar créditos duplicados ──
+      var _dt2=getDailyTgt();
+      var needAfternoon=(480-morningM)+_dt2;
       var tgtExit=linM+needAfternoon;
       document.getElementById('r-breakdown').innerHTML=rows;
       document.getElementById('r-live').style.display='block';
-      showTgt(m2t(tgtExit),stillNeed>0?'para fazer +'+_dt2+' min de extra':'✅ meta atingida! pode sair');
+      showTgt(m2t(tgtExit),'para fazer +'+_dt2+' min de extra');
       document.getElementById('r-impact').style.display='none';
       document.getElementById('r-save').style.display='none';
     }
